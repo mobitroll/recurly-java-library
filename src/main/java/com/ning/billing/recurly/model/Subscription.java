@@ -101,11 +101,9 @@ public class Subscription extends AbstractSubscription {
     @XmlElement(name = "net_terms")
     private Integer netTerms;
 
-    @XmlElement(name = "coupon_code")
-    private String couponCode;
-
     @XmlList
     @XmlElementWrapper(name = "coupon_codes")
+    @XmlElement(name = "coupon_code")
     private List<String> couponCodes;
 
     //Purchase Order Number
@@ -358,14 +356,6 @@ public class Subscription extends AbstractSubscription {
         this.firstRenewalDate = dateTimeOrNull(firstRenewalDate);
     }
 
-    public String getCouponCode() {
-        return couponCode;
-    }
-
-    public void setCouponCode(final String couponCode) {
-        this.couponCode = couponCode;
-    }
-
     public void setCouponCodes(final List<String> couponCodes) {
         this.couponCodes = couponCodes;
     }
@@ -458,7 +448,6 @@ public class Subscription extends AbstractSubscription {
         sb.append(", unitAmountInCents=").append(unitAmountInCents);
         sb.append(", currency='").append(currency).append('\'');
         sb.append(", quantity=").append(quantity);
-        sb.append(", couponCode=").append(couponCode);
         sb.append(", couponCodes=").append(couponCodes);
         sb.append(", activatedAt=").append(activatedAt);
         sb.append(", updatedAt=").append(updatedAt);
@@ -642,7 +631,6 @@ public class Subscription extends AbstractSubscription {
                 taxRate,
                 shippingAddress,
                 shippingAddressId,
-                couponCode,
                 couponCodes,
                 convertedAt,
                 startedWithGift,

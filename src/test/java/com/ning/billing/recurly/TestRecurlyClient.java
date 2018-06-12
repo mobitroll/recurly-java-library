@@ -20,6 +20,7 @@ package com.ning.billing.recurly;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -641,7 +642,7 @@ public class TestRecurlyClient {
             subscriptionData.setUnitAmountInCents(1242);
             subscriptionData.setRemainingBillingCycles(2);
             // Apply a coupon at the time of subscription creation
-            subscriptionData.setCouponCode(couponData.getCouponCode());
+            subscriptionData.setCouponCodes(Collections.singletonList(couponData.getCouponCode()));
             // Create some notes on the subscription
             subscriptionData.setCustomerNotes("Customer Notes");
             subscriptionData.setTermsAndConditions("Terms and Conditions");
@@ -1312,7 +1313,7 @@ public class TestRecurlyClient {
             // Subscribe the user to the plan
             final Subscription subscriptionData = new Subscription();
             // set our coupon code
-            subscriptionData.setCouponCode(coupon.getCouponCode());
+            subscriptionData.setCouponCodes(Collections.singletonList(coupon.getCouponCode()));
 
             subscriptionData.setPlanCode(plan.getPlanCode());
             subscriptionData.setAccount(accountData);
