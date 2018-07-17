@@ -2027,7 +2027,6 @@ public class RecurlyClient {
           if (statusCode >= 300) {
                 log.warn("Recurly error whilst calling: {}\n{}", response.getUri(), payload);
                 log.warn("Error status code: {}\n", response.getStatusCode());
-                RecurlyAPIError recurlyError = new RecurlyAPIError();
 
                 // 422 is returned for transaction errors (see https://dev.recurly.com/page/transaction-errors)
                 if (statusCode == 422) {
