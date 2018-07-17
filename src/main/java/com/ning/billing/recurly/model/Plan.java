@@ -17,13 +17,13 @@
 
 package com.ning.billing.recurly.model;
 
+import com.google.common.base.Objects;
+import org.joda.time.DateTime;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
-import org.joda.time.DateTime;
-import com.google.common.base.Objects;
 
 @XmlRootElement(name = "plan")
 public class Plan extends RecurlyObject {
@@ -100,6 +100,9 @@ public class Plan extends RecurlyObject {
 
     @XmlElement(name = "setup_fee_in_cents")
     private RecurlyUnitCurrency setupFeeInCents;
+
+    @XmlElement(name = "auto_renew")
+    private Boolean autoRenew;
 
     public String getPlanCode() {
         return planCode;
@@ -273,16 +276,24 @@ public class Plan extends RecurlyObject {
         return setupFeeRevenueScheduleType;
     }
 
-    public void setSetupFeeRevenueScheduleType(final RevenueScheduleType setupFeeRevenueScheduleType) {
-        this.setupFeeRevenueScheduleType = revenueScheduleType;
+    public void setSetupFeeRevenueScheduleType(final Object setupFeeRevenueScheduleType) {
+        this.setupFeeRevenueScheduleType = enumOrNull(RevenueScheduleType.class, setupFeeRevenueScheduleType, true);
     }
 
     public RevenueScheduleType getRevenueScheduleType() {
         return revenueScheduleType;
     }
 
-    public void setRevenueScheduleType(final String revenueScheduleType) {
-        this.revenueScheduleType = RevenueScheduleType.valueOf(revenueScheduleType.toUpperCase());
+    public void setRevenueScheduleType(final Object revenueScheduleType) {
+        this.revenueScheduleType = enumOrNull(RevenueScheduleType.class, revenueScheduleType, true);
+    }
+
+    public Boolean getAutoRenew() {
+        return this.autoRenew;
+    }
+
+    public void setAutoRenew(final Object trialRequiresBillingInfo) {
+        this.autoRenew = booleanOrNull(autoRenew);
     }
 
     @Override
@@ -312,6 +323,7 @@ public class Plan extends RecurlyObject {
         sb.append(", setupFeeInCents=").append(setupFeeInCents);
         sb.append(", revenueScheduleType=").append(revenueScheduleType);
         sb.append(", setupFeeRevenueScheduleType=").append(setupFeeRevenueScheduleType);
+        sb.append(", autoRenew=").append(autoRenew);
         sb.append('}');
         return sb.toString();
     }
@@ -333,6 +345,9 @@ public class Plan extends RecurlyObject {
             return false;
         }
         if (addOns != null ? !addOns.equals(plan.addOns) : plan.addOns != null) {
+            return false;
+        }
+        if (autoRenew != null ? !autoRenew.equals(plan.autoRenew) : plan.autoRenew != null) {
             return false;
         }
         if (cancelLink != null ? !cancelLink.equals(plan.cancelLink) : plan.cancelLink != null) {
@@ -421,7 +436,8 @@ public class Plan extends RecurlyObject {
                 setupFeeInCents,
                 revenueScheduleType,
                 setupFeeRevenueScheduleType,
-                trialRequiresBillingInfo
+                trialRequiresBillingInfo,
+                autoRenew
         );
     }
 }

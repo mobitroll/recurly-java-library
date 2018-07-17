@@ -17,15 +17,13 @@
 
 package com.ning.billing.recurly.model;
 
+import com.google.common.base.Objects;
+import org.joda.time.DateTime;
+
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.joda.time.DateTime;
-
-import com.google.common.base.Objects;
-
 import java.math.BigDecimal;
 import java.util.List;
 
@@ -143,10 +141,40 @@ public class Subscription extends AbstractSubscription {
     private Long shippingAddressId;
 
     @XmlElement(name = "no_billing_info_reason")
-    public String noBillingInfoReason;
+    private String noBillingInfoReason;
 
     @XmlElement(name = "imported_trial")
-    public Boolean importedTrial;
+    private Boolean importedTrial;
+
+    @XmlElement(name = "credit_customer_notes")
+    private String creditCustomerNotes;
+
+    @XmlElement(name = "invoice_collection")
+    private InvoiceCollection invoiceCollection;
+
+    @XmlElement(name = "remaining_pause_cycles")
+    private Integer remainingPauseCycles;
+
+    @XmlElement(name = "paused_at")
+    private DateTime pausedAt;
+
+    @XmlElement(name = "auto_renew")
+    private Boolean autoRenew;
+
+    @XmlElement(name = "renewal_billing_cycles")
+    private Integer renewalBillingCycles;
+
+    @XmlElement(name = "first_bill_date")
+    private DateTime firstBillDate;
+
+    @XmlElement(name = "next_bill_date")
+    private DateTime nextBillDate;
+
+    @XmlElement(name = "current_term_started_at")
+    private DateTime currentTermStartedAt;
+
+    @XmlElement(name = "current_term_ends_at")
+    private DateTime currentTermEndsAt;
 
     public Account getAccount() {
         if (account != null && account.getHref() != null && !account.getHref().isEmpty()) {
@@ -382,8 +410,8 @@ public class Subscription extends AbstractSubscription {
         return revenueScheduleType;
     }
 
-    public void setRevenueScheduleType(final RevenueScheduleType revenueScheduleType) {
-        this.revenueScheduleType = revenueScheduleType;
+    public void setRevenueScheduleType(final Object revenueScheduleType) {
+        this.revenueScheduleType = enumOrNull(RevenueScheduleType.class, revenueScheduleType, true);
     }
 
     public GiftCard getGiftCard() {
@@ -447,6 +475,86 @@ public class Subscription extends AbstractSubscription {
     }
 
 
+    public String getCreditCustomerNotes() {
+        return creditCustomerNotes;
+    }
+
+    public void setCreditCustomerNotes(final Object creditCustomerNotes) {
+        this.creditCustomerNotes = stringOrNull(creditCustomerNotes);
+    }
+
+    public InvoiceCollection getInvoiceCollection() {
+        return invoiceCollection;
+    }
+
+    public void setInvoiceCollection(final InvoiceCollection invoiceCollection) {
+        this.invoiceCollection = invoiceCollection;
+    }
+
+    public Integer getRemainingPauseCycles() {
+        return remainingPauseCycles;
+    }
+
+    public void setRemainingPauseCycles(final Object remainingPauseCycles) {
+        this.remainingPauseCycles = integerOrNull(remainingPauseCycles);
+    }
+
+    public DateTime getPausedAt() {
+        return this.pausedAt;
+    }
+
+    public void setPausedAt(final Object pausedAt) {
+        this.pausedAt = dateTimeOrNull(pausedAt);
+    }
+
+    public Boolean getAutoRenew() {
+        return this.autoRenew;
+    }
+
+    public void setAutoRenew(final Object trialRequiresBillingInfo) {
+        this.autoRenew = booleanOrNull(autoRenew);
+    }
+
+    public Integer getRenewalBillingCycles() {
+        return renewalBillingCycles;
+    }
+
+    public void setRenewalBillingCycles(final Object renewalBillingCycles) {
+        this.renewalBillingCycles = integerOrNull(renewalBillingCycles);
+    }
+
+    public DateTime getFirstBillDate() {
+        return firstBillDate;
+    }
+
+    protected void setFirstBillDate(final Object firstBillDate) {
+        this.firstBillDate = dateTimeOrNull(firstBillDate);
+    }
+
+    public DateTime getNextBillDate() {
+        return nextBillDate;
+    }
+
+    protected void setNextBillDate(final Object nextBillDate) {
+        this.nextBillDate = dateTimeOrNull(nextBillDate);
+    }
+
+    public DateTime getCurrentTermStartedAt() {
+        return currentTermStartedAt;
+    }
+
+    protected void setCurrentTermStartedAt(final Object currentTermStartedAt) {
+        this.currentTermStartedAt = dateTimeOrNull(currentTermStartedAt);
+    }
+
+    public DateTime getCurrentTermEndsAt() {
+        return currentTermEndsAt;
+    }
+
+    protected void setCurrentTermEndsAt(final Object currentTermEndsAt) {
+        this.currentTermEndsAt = dateTimeOrNull(currentTermEndsAt);
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -486,6 +594,16 @@ public class Subscription extends AbstractSubscription {
         sb.append(", convertedAt=").append(convertedAt);
         sb.append(", noBillingInfoReason=").append(noBillingInfoReason);
         sb.append(", importedTrial=").append(importedTrial);
+        sb.append(", creditCustomerNotes=").append(creditCustomerNotes);
+        sb.append(", invoiceCollection=").append(invoiceCollection);
+        sb.append(", remainingPauseCycles=").append(remainingPauseCycles);
+        sb.append(", pausedAt=").append(pausedAt);
+        sb.append(", autoRenew=").append(autoRenew);
+        sb.append(", renewalBillingCycles=").append(renewalBillingCycles);
+        sb.append(", firstBillDate=").append(firstBillDate);
+        sb.append(", nextBillDate=").append(nextBillDate);
+        sb.append(", currentPeriodStartedAt=").append(currentPeriodStartedAt);
+        sb.append(", currentPeriodEndsAt=").append(currentPeriodEndsAt);
         sb.append('}');
         return sb.toString();
     }
@@ -533,6 +651,9 @@ public class Subscription extends AbstractSubscription {
         if (remainingBillingCycles != null ? !remainingBillingCycles.equals(that.remainingBillingCycles) : that.remainingBillingCycles != null) {
             return false;
         }
+        if (remainingPauseCycles != null ? !remainingPauseCycles.equals(that.remainingPauseCycles) : that.remainingPauseCycles != null) {
+            return false;
+        }
         if (plan != null ? !plan.equals(that.plan) : that.plan != null) {
             return false;
         }
@@ -567,6 +688,9 @@ public class Subscription extends AbstractSubscription {
             return false;
         }
         if (netTerms != null ? !netTerms.equals(that.netTerms) : that.netTerms != null) {
+            return false;
+        }
+        if (pausedAt != null ? pausedAt.compareTo(that.pausedAt) != 0 : that.pausedAt != null) {
             return false;
         }
         if (poNumber != null ? !poNumber.equals(that.poNumber) : that.poNumber != null) {
@@ -605,6 +729,28 @@ public class Subscription extends AbstractSubscription {
         if (noBillingInfoReason != null ? !noBillingInfoReason.equals(that.noBillingInfoReason) : that.noBillingInfoReason != null) {
             return false;
         }
+        if (creditCustomerNotes != null ? !creditCustomerNotes.equals(that.creditCustomerNotes) : that.creditCustomerNotes != null) {
+            return false;
+        }
+        if (invoiceCollection != null ? !invoiceCollection.equals(that.invoiceCollection) : that.invoiceCollection != null) {
+            return false;
+        }
+        if (renewalBillingCycles != null ? !renewalBillingCycles.equals(that.renewalBillingCycles) : that.renewalBillingCycles != null) {
+            return false;
+        }
+        if (firstBillDate != null ? firstBillDate.compareTo(that.firstBillDate) != 0 : that.firstBillDate != null) {
+            return false;
+        }
+        if (nextBillDate != null ? nextBillDate.compareTo(that.nextBillDate) != 0 : that.nextBillDate != null) {
+            return false;
+        }
+        if (currentPeriodStartedAt != null ? currentPeriodStartedAt.compareTo(that.currentPeriodStartedAt) != 0 : that.currentPeriodStartedAt != null) {
+            return false;
+        }
+        if (currentPeriodEndsAt != null ? currentPeriodEndsAt.compareTo(that.currentPeriodEndsAt) != 0 : that.currentPeriodEndsAt != null) {
+            return false;
+        }
+
 
         return true;
     }
@@ -647,7 +793,16 @@ public class Subscription extends AbstractSubscription {
                 convertedAt,
                 startedWithGift,
                 noBillingInfoReason,
-                importedTrial
+                importedTrial,
+                invoiceCollection,
+                remainingPauseCycles,
+                pausedAt,
+                autoRenew,
+                renewalBillingCycles,
+                firstBillDate,
+                nextBillDate,
+                currentPeriodStartedAt,
+                currentPeriodEndsAt
         );
     }
 

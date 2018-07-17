@@ -18,15 +18,14 @@
 package com.ning.billing.recurly.model;
 
 import com.google.common.base.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import org.joda.time.DateTime;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-
-import org.joda.time.DateTime;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @XmlRootElement(name = "account")
 public class Account extends RecurlyObject {
@@ -67,6 +66,9 @@ public class Account extends RecurlyObject {
 
     @XmlElement(name = "email")
     private String email;
+
+    @XmlElement(name = "cc_emails")
+    private String ccEmails;
 
     @XmlElement(name = "first_name")
     private String firstName;
@@ -114,11 +116,17 @@ public class Account extends RecurlyObject {
     @XmlElement(name = "has_past_due_invoice")
     private Boolean hasPastDueInvoice;
 
+    @XmlElement(name = "has_paused_subscription")
+    private Boolean hasPausedSubscription;
+
     @XmlElement(name = "vat_number")
     private String vatNumber;
 
     @XmlElement(name = "account_acquisition")
     private AccountAcquisition accountAcquisition;
+
+    @XmlElement(name = "preferred_locale")
+    private String preferredLocale;
 
     @Override
     public void setHref(final Object href) {
@@ -204,6 +212,14 @@ public class Account extends RecurlyObject {
 
     public void setEmail(final Object email) {
         this.email = stringOrNull(email);
+    }
+
+    public String getCcEmails() {
+        return ccEmails;
+    }
+
+    public void setCcEmails(final Object ccEmails) {
+        this.ccEmails = stringOrNull(ccEmails);
     }
 
     public String getFirstName() {
@@ -318,6 +334,14 @@ public class Account extends RecurlyObject {
         this.hasPastDueInvoice = booleanOrNull(hasPastDueInvoice);
     }
 
+    public Boolean getHasPausedSubscription() {
+        return hasPausedSubscription;
+    }
+
+    protected void setHasPausedSubscription(final Object hasPausedSubscription) {
+        this.hasPausedSubscription = booleanOrNull(hasPausedSubscription);
+    }
+
     public ShippingAddresses getShippingAddresses() {
         return shippingAddresses;
     }
@@ -342,6 +366,14 @@ public class Account extends RecurlyObject {
         this.accountAcquisition = accountAcquisition;
     }
 
+    public String getPreferredLocale() {
+        return preferredLocale;
+    }
+
+    public void setPreferredLocale(final Object preferredLocale) {
+        this.preferredLocale = stringOrNull(preferredLocale);
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Account{");
@@ -355,6 +387,7 @@ public class Account extends RecurlyObject {
         sb.append(", state='").append(state).append('\'');
         sb.append(", username='").append(username).append('\'');
         sb.append(", email='").append(email).append('\'');
+        sb.append(", ccEmails='").append(ccEmails).append('\'');
         sb.append(", firstName='").append(firstName).append('\'');
         sb.append(", lastName='").append(lastName).append('\'');
         sb.append(", companyName='").append(companyName).append('\'');
@@ -370,8 +403,10 @@ public class Account extends RecurlyObject {
         sb.append(", hasFutureSubscription=").append(hasFutureSubscription);
         sb.append(", hasCanceledSubscription=").append(hasCanceledSubscription);
         sb.append(", hasPastDueInvoice=").append(hasPastDueInvoice);
+        sb.append(", hasPausedSubscription=").append(hasPausedSubscription);
         sb.append(", vatNumber=").append(vatNumber);
         sb.append(", accountAcquisition=").append(accountAcquisition);
+        sb.append(", preferredLocale=").append(preferredLocale);
         sb.append('}');
         return sb.toString();
     }
@@ -384,6 +419,9 @@ public class Account extends RecurlyObject {
         final Account account = (Account) o;
 
         if (acceptLanguage != null ? !acceptLanguage.equals(account.acceptLanguage) : account.acceptLanguage != null) {
+            return false;
+        }
+        if (accountAcquisition != null ? !accountAcquisition.equals(account.accountAcquisition) : account.accountAcquisition != null) {
             return false;
         }
         if (accountCode != null ? !accountCode.equals(account.accountCode) : account.accountCode != null) {
@@ -407,6 +445,9 @@ public class Account extends RecurlyObject {
         if (email != null ? !email.equals(account.email) : account.email != null) {
             return false;
         }
+        if (ccEmails != null ? !ccEmails.equals(account.ccEmails) : account.ccEmails != null) {
+            return false;
+        }
         if (firstName != null ? !firstName.equals(account.firstName) : account.firstName != null) {
             return false;
         }
@@ -422,6 +463,9 @@ public class Account extends RecurlyObject {
         if (hasCanceledSubscription != null ? !hasCanceledSubscription.equals(account.hasCanceledSubscription) : account.hasCanceledSubscription != null) {
             return false;
         }
+        if (hasPausedSubscription != null ? !hasPausedSubscription.equals(account.hasPausedSubscription) : account.hasPausedSubscription != null) {
+            return false;
+        }
         if (href != null ? !href.equals(account.href) : account.href != null) {
             return false;
         }
@@ -432,6 +476,9 @@ public class Account extends RecurlyObject {
             return false;
         }
         if (lastName != null ? !lastName.equals(account.lastName) : account.lastName != null) {
+            return false;
+        }
+        if (preferredLocale != null ? !preferredLocale.equals(account.preferredLocale) : account.preferredLocale != null) {
             return false;
         }
         if (state != null ? !state.equals(account.state) : account.state != null) {
@@ -458,9 +505,6 @@ public class Account extends RecurlyObject {
         if (vatNumber != null ? !vatNumber.equals(account.vatNumber) : account.vatNumber != null) {
             return false;
         }
-        if (accountAcquisition != null ? !accountAcquisition.equals(account.accountAcquisition) : account.accountAcquisition != null) {
-            return false;
-        }
 
         return true;
     }
@@ -478,12 +522,14 @@ public class Account extends RecurlyObject {
                 state,
                 username,
                 email,
+                ccEmails,
                 firstName,
                 hasLiveSubscription,
                 hasActiveSubscription,
                 hasCanceledSubscription,
                 hasFutureSubscription,
                 hasPastDueInvoice,
+                hasPausedSubscription,
                 lastName,
                 companyName,
                 acceptLanguage,
@@ -494,7 +540,8 @@ public class Account extends RecurlyObject {
                 taxExempt,
                 shippingAddresses,
                 vatNumber,
-                accountAcquisition
+                accountAcquisition,
+                preferredLocale
         );
     }
 }
