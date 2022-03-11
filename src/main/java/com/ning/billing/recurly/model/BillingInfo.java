@@ -17,13 +17,13 @@
 
 package com.ning.billing.recurly.model;
 
+import com.google.common.base.Objects;
+import org.joda.time.DateTime;
+
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
-import javax.xml.bind.annotation.XmlAttribute;
-
-import com.google.common.base.Objects;
-import org.joda.time.DateTime;
 
 @XmlRootElement(name = "billing_info")
 public class BillingInfo extends RecurlyObject {
@@ -521,6 +521,7 @@ public class BillingInfo extends RecurlyObject {
         sb.append(", amazonRegion='").append(amazonRegion).append('\'');
         sb.append(", threeDSecureActionResultTokenId='").append(threeDSecureActionResultTokenId).append('\'');
         sb.append(", iban='").append(iban).append('\'');
+        sb.append(", tokenId='").append(tokenId).append('\'');
         sb.append('}');
         return sb.toString();
     }
