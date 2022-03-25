@@ -39,6 +39,38 @@ public class TestErrors extends TestModelBase {
     }
 
     @Test(groups = "fast")
+    public void testDeserializationOfErrorsWithMessage() throws Exception {
+        final String errorsData = "<errors>" +
+            "<error field=\"subscription.coupon_code\" symbol=\"\">has reached max redemptions for this account</error>" +
+            "</errors>";
+
+        final Errors errors = xmlMapper.readValue(errorsData, Errors.class);
+        Assert.assertEquals(errors.getRecurlyErrors().get(0).getField(), "subscription.coupon_code");
+        Assert.assertEquals(errors.getRecurlyErrors().get(0).getSymbol(), "");
+        Assert.assertEquals(errors.getRecurlyErrors().get(0).getMessage(), "has reached max redemptions for this account");
+    }
+
+    @Test(groups = "fast")
+    public void testSerializationOfErrorsWithMessage() throws Exception {
+        final String errorsData = "<errors>" +
+            "<error field=\"subscription.coupon_code\" symbol=\"something\">has reached max redemptions for this account</error>" +
+            "</errors>";
+
+        RecurlyError recurlyError = new RecurlyError();
+        recurlyError.setMessage("has reached max redemptions for this account");
+        recurlyError.setSymbol("something");
+        recurlyError.setField("subscription.coupon_code");
+        RecurlyErrors recurlyErrors = new RecurlyErrors();
+        recurlyErrors.add(recurlyError);
+        final Errors errors = new Errors();
+        errors.setRecurlyErrors(recurlyErrors);
+
+        String serialised = xmlMapper.writeValueAsString(errors);
+        Assert.assertEquals(serialised, errorsData);
+
+    }
+
+    @Test(groups = "fast")
     public void testSerializationTransactionErrors() throws Exception {
         final String errorsData = "<errors>\n" +
                                   "  <transaction_error>\n" +

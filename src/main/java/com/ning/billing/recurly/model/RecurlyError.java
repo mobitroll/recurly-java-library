@@ -17,20 +17,24 @@
 
 package com.ning.billing.recurly.model;
 
+import com.google.common.base.Objects;
+
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import com.google.common.base.Objects;
+import javax.xml.bind.annotation.XmlValue;
 
 @XmlRootElement(name = "error")
 public class RecurlyError extends RecurlyObject {
 
-    @XmlElement(name = "field")
+    @XmlAttribute(name = "field")
     private String field;
 
-    @XmlElement(name = "symbol")
+    @XmlAttribute(name = "symbol")
     private String symbol;
 
     @XmlElement(name = "message")
+    @XmlValue
     private String message;
 
     public String getField() {
