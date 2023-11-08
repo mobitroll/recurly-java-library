@@ -85,6 +85,9 @@ public class Invoice extends RecurlyObject {
     @XmlElementWrapper(name = "tax_details")
     private List<TaxDetail> taxDetails;
 
+    @XmlElement(name = "used_tax_service")
+    private Boolean usedTaxService;
+
     @XmlElement(name = "created_at")
     private DateTime createdAt;
 
@@ -165,6 +168,9 @@ public class Invoice extends RecurlyObject {
 
     @XmlElement(name = "dunning_campaign_id")
     private String dunningCampaignId;
+
+    @XmlElement(name = "business_entity")
+    private BusinessEntity businessEntity;
 
     public Account getAccount() {
         if (account != null && account.getCreatedAt() == null) {
@@ -333,6 +339,14 @@ public class Invoice extends RecurlyObject {
 
     public void setTaxDetails(final List<TaxDetail> taxDetails) {
         this.taxDetails = taxDetails;
+    }
+
+    public Boolean getUsedTaxService() {
+        return usedTaxService;
+    }
+
+    public void setUsedTaxService(final Object usedTaxService) {
+        this.usedTaxService = booleanOrNull(usedTaxService);
     }
 
     public DateTime getCreatedAt() {
@@ -544,12 +558,20 @@ public class Invoice extends RecurlyObject {
         this.dunningCampaignId = stringOrNull(dunningCampaignId);
     }
 
+    public BusinessEntity getBusinessEntity() {
+        if (businessEntity != null && businessEntity.getHref() != null && !businessEntity.getHref().isEmpty()) {
+            businessEntity = fetch(businessEntity, BusinessEntity.class);
+        }
+        return businessEntity;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Invoice{");
         sb.append("account=").append(account);
         sb.append(", originalInvoice='").append(originalInvoice).append('\'');
         sb.append(", originalInvoices='").append(originalInvoices).append('\'');
+        sb.append(", businessEntity='").append(businessEntity).append('\'');
         sb.append(", uuid='").append(uuid).append('\'');
         sb.append(", state='").append(state).append('\'');
         sb.append(", invoiceNumber=").append(invoiceNumber);
@@ -565,6 +587,7 @@ public class Invoice extends RecurlyObject {
         sb.append(", taxType=").append(taxType);
         sb.append(", taxRate=").append(taxRate);
         sb.append(", taxDetails=").append(taxDetails);
+        sb.append(", usedTaxService=").append(usedTaxService);
         sb.append(", createdAt=").append(createdAt);
         sb.append(", updatedAt=").append(updatedAt);
         sb.append(", closedAt=").append(closedAt);
@@ -693,6 +716,9 @@ public class Invoice extends RecurlyObject {
         if (taxDetails != null ? !taxDetails.equals(invoice.taxDetails) : invoice.taxDetails != null) {
             return false;
         }
+        if (usedTaxService != null ? !usedTaxService.equals(invoice.usedTaxService) : invoice.usedTaxService != null) {
+            return false;
+        }
         if (termsAndConditions != null ? !termsAndConditions.equals(invoice.termsAndConditions) : invoice.termsAndConditions != null) {
             return false;
         }
@@ -750,6 +776,7 @@ public class Invoice extends RecurlyObject {
                 taxType,
                 taxRate,
                 taxDetails,
+                usedTaxService,
                 currency,
                 createdAt,
                 updatedAt,

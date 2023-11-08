@@ -61,6 +61,9 @@ public class Account extends RecurlyObject {
     @XmlElement(name = "invoice_template")
     private InvoiceTemplate invoiceTemplate;
 
+    @XmlElement(name = "override_business_entity")
+    private BusinessEntity overrideBusinessEntity;
+
     @XmlElement(name = "account_code")
     private String accountCode;
 
@@ -154,6 +157,9 @@ public class Account extends RecurlyObject {
     @XmlElement(name = "preferred_locale")
     private String preferredLocale;
 
+    @XmlElement(name = "preferred_time_zone")
+    private String preferredTimeZone;
+
     @XmlElement(name = "transaction_type")
     private String transactionType;
 
@@ -162,6 +168,18 @@ public class Account extends RecurlyObject {
 
     @XmlElement(name = "invoice_template_uuid")
     private String invoiceTemplateUuid;
+
+    @XmlElement(name = "override_business_entity_id")
+    private String overrideBusinessEntityId;
+
+    @XmlElementWrapper(name = "entitlements")
+    private Entitlements entitlements;
+
+    @XmlElementWrapper(name = "external_subscriptions")
+    private ExternalSubscriptions externalSubscriptions;
+
+    @XmlElementWrapper(name = "external_accounts")
+    private ExternalAccounts externalAccounts;
 
     @Override
     public void setHref(final Object href) {
@@ -199,6 +217,30 @@ public class Account extends RecurlyObject {
 
     public void setInvoices(final Invoices invoices) {
         this.invoices = invoices;
+    }
+
+    public Entitlements getEntitlements() {
+        return entitlements;
+    }
+
+    public void setEntitlements(final Entitlements entitlements) {
+        this.entitlements = entitlements;
+    }
+
+    public ExternalSubscriptions getExternalSubscriptions() {
+        return externalSubscriptions;
+    }
+
+    public void setExternalSubscriptions(final ExternalSubscriptions externalSubscriptions) {
+        this.externalSubscriptions = externalSubscriptions;
+    }
+
+    public ExternalAccounts getExternalAccounts() {
+        return externalAccounts;
+    }
+
+    public void setExternalAccounts(final ExternalAccounts externalAccounts) {
+        this.externalAccounts = externalAccounts;
     }
 
     public Subscriptions getSubscriptions() {
@@ -445,12 +487,28 @@ public class Account extends RecurlyObject {
         this.preferredLocale = stringOrNull(preferredLocale);
     }
 
+    public String getPreferredTimeZone() {
+        return preferredTimeZone;
+    }
+
+    public void setPreferredTimeZone(final Object preferredTimeZone) {
+        this.preferredTimeZone = stringOrNull(preferredTimeZone);
+    }
+
     public String getTransactionType() {
         return transactionType;
     }
 
     public void setTransactionType(final Object transactionType) {
         this.transactionType = stringOrNull(transactionType);
+    }
+
+    public String getOverrideBusinessEntityId() {
+        return overrideBusinessEntityId;
+    }
+
+    public void setOverrideBusinessEntityId(final Object overrideBusinessEntityId) {
+        this.overrideBusinessEntityId = stringOrNull(overrideBusinessEntityId);
     }
 
     public String getDunningCampaignId() {
@@ -474,6 +532,13 @@ public class Account extends RecurlyObject {
             invoiceTemplate = fetch(invoiceTemplate, InvoiceTemplate.class);
         }
         return invoiceTemplate;
+    }
+
+    public BusinessEntity getOverrideBusinessEntity() {
+        if (overrideBusinessEntity != null && overrideBusinessEntity.getHref() != null && !overrideBusinessEntity.getHref().isEmpty()) {
+            overrideBusinessEntity = fetch(overrideBusinessEntity, BusinessEntity.class);
+        }
+        return overrideBusinessEntity;
     }
 
     @Override
@@ -514,6 +579,8 @@ public class Account extends RecurlyObject {
         sb.append(", vatNumber=").append(vatNumber);
         sb.append(", accountAcquisition=").append(accountAcquisition);
         sb.append(", preferredLocale=").append(preferredLocale);
+        sb.append(", preferredTimeZone=").append(preferredTimeZone);
+        sb.append(", overrideBusinessEntityId=").append(overrideBusinessEntityId);
         sb.append(", transactionType='").append(transactionType).append('\'');
         sb.append('}');
         return sb.toString();
@@ -598,6 +665,9 @@ public class Account extends RecurlyObject {
         if (preferredLocale != null ? !preferredLocale.equals(account.preferredLocale) : account.preferredLocale != null) {
             return false;
         }
+        if (preferredTimeZone != null ? !preferredTimeZone.equals(account.preferredTimeZone) : account.preferredTimeZone != null) {
+            return false;
+        }
         if (state != null ? !state.equals(account.state) : account.state != null) {
             return false;
         }
@@ -672,6 +742,7 @@ public class Account extends RecurlyObject {
                 vatNumber,
                 accountAcquisition,
                 preferredLocale,
+                preferredTimeZone,
                 closedAt,
                 transactionType
         );

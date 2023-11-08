@@ -45,6 +45,7 @@ public class TestAdjustment extends TestModelBase {
                                       "  <origin>charge</origin>\n" +
                                       "  <unit_amount_in_cents type=\"integer\">5000</unit_amount_in_cents>\n" +
                                       "  <quantity type=\"integer\">1</quantity>\n" +
+                                      "  <quantity_decimal>1.1234</quantity_decimal>\n" +
                                       "  <discount_in_cents type=\"integer\">0</discount_in_cents>\n" +
                                       "  <tax_in_cents type=\"integer\">0</tax_in_cents>\n" +
                                       "  <total_in_cents type=\"integer\">5000</total_in_cents>\n" +
@@ -70,6 +71,13 @@ public class TestAdjustment extends TestModelBase {
                                       "  <revenue_schedule_type>at_invoice</revenue_schedule_type>\n" +
                                       "  <end_date nil=\"nil\"></end_date>\n" +
                                       "  <created_at type=\"dateTime\">2011-08-31T03:30:00Z</created_at>\n" +
+                                      "  <custom_fields type=\"array\">\n" +
+                                      "    <custom_field>\n" +
+                                      "      <name>size</name>\n" +
+                                      "      <value>large</value>\n" +
+                                      "    </custom_field>\n" +
+                                      "  </custom_fields>\n" +
+
                                       "</adjustment>";
 
         final Adjustment adjustment = xmlMapper.readValue(adjustmentData, Adjustment.class);
@@ -85,6 +93,7 @@ public class TestAdjustment extends TestModelBase {
         Assert.assertEquals(adjustment.getOrigin(), "charge");
         Assert.assertEquals((int) adjustment.getUnitAmountInCents(), 5000);
         Assert.assertEquals((int) adjustment.getQuantity(), 1);
+        Assert.assertEquals(adjustment.getQuantityDecimal(), new BigDecimal("1.1234"));
         Assert.assertEquals((int) adjustment.getDiscountInCents(), 0);
         Assert.assertEquals((int) adjustment.getTotalInCents(), 5000);
         Assert.assertEquals(adjustment.getCurrency(), "USD");
@@ -100,6 +109,7 @@ public class TestAdjustment extends TestModelBase {
         Assert.assertEquals(adjustment.getCreatedAt(), new DateTime("2011-08-31T03:30:00Z"));
         Assert.assertEquals(adjustment.getRevenueScheduleType(), RevenueScheduleType.AT_INVOICE);
         Assert.assertEquals(adjustment.getSurchargeInCents(), new Integer(100));
+        Assert.assertEquals(adjustment.getCustomFields(), this.getCustomFields());
 
         // Test Serialization
         final String xml = xmlMapper.writeValueAsString(adjustment);
@@ -111,6 +121,7 @@ public class TestAdjustment extends TestModelBase {
         Assert.assertEquals(readValue.getOrigin(), adjustment.getOrigin());
         Assert.assertEquals((int) readValue.getUnitAmountInCents(), (int) adjustment.getUnitAmountInCents());
         Assert.assertEquals((int) readValue.getQuantity(), (int) adjustment.getQuantity());
+        Assert.assertEquals(readValue.getQuantityDecimal(), adjustment.getQuantityDecimal());
         Assert.assertEquals((int) readValue.getDiscountInCents(), (int) adjustment.getDiscountInCents());
         Assert.assertEquals((int) readValue.getTotalInCents(), (int) adjustment.getTotalInCents());
         Assert.assertEquals(readValue.getCurrency(), adjustment.getCurrency());
@@ -132,5 +143,16 @@ public class TestAdjustment extends TestModelBase {
         taxDetails.add(taxDetail);
 
         return taxDetails;
+    }
+
+    private List<CustomField> getCustomFields() {
+        final List<CustomField> customFields = new ArrayList<CustomField>();
+        final CustomField customField = new CustomField();
+
+        customField.setName("size");
+        customField.setValue("large");
+        customFields.add(customField);
+
+        return customFields;
     }
 }
