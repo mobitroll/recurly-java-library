@@ -19,14 +19,13 @@ package com.ning.billing.recurly.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Objects;
-import org.joda.time.DateTime;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import org.joda.time.DateTime;
 
 @XmlRootElement(name = "subscription")
 public class Subscription extends AbstractSubscription {
@@ -192,6 +191,9 @@ public class Subscription extends AbstractSubscription {
     @XmlElementWrapper(name = "ramp_intervals")
     @XmlElement(name = "ramp_interval")
     private SubscriptionRampIntervals rampIntervals;
+
+    @XmlElement(name = "gateway_code")
+    private String gatewayCode;
 
     @XmlElement(name = "action_result")
     private String actionResult;
@@ -617,6 +619,14 @@ public class Subscription extends AbstractSubscription {
         this.transactionType = stringOrNull(transactionType);
     }
 
+    public String getGatewayCode() {
+        return gatewayCode;
+    }
+
+    public void setGatewayCode(final Object gatewayCode) {
+        this.gatewayCode = stringOrNull(gatewayCode);
+    }
+
     public String getActionResult() {
         return actionResult;
     }
@@ -679,6 +689,7 @@ public class Subscription extends AbstractSubscription {
         sb.append(", nextBillDate=").append(nextBillDate);
         sb.append(", currentPeriodStartedAt=").append(currentPeriodStartedAt);
         sb.append(", currentPeriodEndsAt=").append(currentPeriodEndsAt);
+        sb.append(", gatewayCode=").append(gatewayCode);
         sb.append(", actionResult=").append(actionResult);
         sb.append(", transactionType='").append(transactionType).append('\'');
         sb.append('}');
@@ -846,6 +857,10 @@ public class Subscription extends AbstractSubscription {
             return false;
         }
 
+        if (gatewayCode != null ? !gatewayCode.equals(that.gatewayCode) : that.gatewayCode != null) {
+            return false;
+        }
+
         return true;
     }
 
@@ -903,6 +918,7 @@ public class Subscription extends AbstractSubscription {
                 currentPeriodStartedAt,
                 currentPeriodEndsAt,
                 transactionType,
+                gatewayCode,
                 actionResult
         );
     }

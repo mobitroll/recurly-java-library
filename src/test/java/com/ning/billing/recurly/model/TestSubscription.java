@@ -17,18 +17,17 @@
 
 package com.ning.billing.recurly.model;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-
-import com.ning.billing.recurly.TestUtils;
-import org.joda.time.DateTime;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
+
+import com.ning.billing.recurly.TestUtils;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import org.joda.time.DateTime;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 public class TestSubscription extends TestModelBase {
 
@@ -88,6 +87,7 @@ public class TestSubscription extends TestModelBase {
                                         "    <subscription_add_ons type=\"array\">\n" +
                                         "    </subscription_add_ons>\n" +
                                         "  </pending_subscription>\n" +
+                                        "  <gateway_code>test_gateway</gateway_code>\n" +
                                         "</subscription>";
 
         final Subscription subscription = verifySubscription(subscriptionData);
@@ -100,6 +100,8 @@ public class TestSubscription extends TestModelBase {
         codes.add("abc");
         assertEquals(subscription.getCouponCodes(), codes);
         assertEquals((int) subscription.getTaxInCents(), (int) 394);
+
+        assertEquals(subscription.getGatewayCode(), "test_gateway");
     }
 
     @Test(groups = "fast")
