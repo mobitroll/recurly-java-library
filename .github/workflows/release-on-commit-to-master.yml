@@ -30,14 +30,14 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
 
       - name: Setup gcloud CLI
-        uses: 'google-github-actions/auth@v0'
+        uses: 'google-github-actions/auth@v1'
         with:
           credentials_json: ${{ secrets.GKE_SA_KEY }}
 
       - name: Setup gcloud
-        uses: google-github-actions/setup-gcloud@v0
+        uses: google-github-actions/setup-gcloud@v1
         with:
-          version: "290.0.1"
+          version: "latest"
 
       - name: Release and Publish
         uses: qcastel/github-actions-maven-release@master
