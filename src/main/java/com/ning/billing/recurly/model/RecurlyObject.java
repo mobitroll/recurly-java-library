@@ -94,14 +94,21 @@ public abstract class RecurlyObject {
         m.addSerializer(CustomFields.class, new RecurlyObjectsSerializer<CustomFields, CustomField>(CustomFields.class, "custom_field"));
         m.addSerializer(Invoices.class, new RecurlyObjectsSerializer<Invoices, Invoice>(Invoices.class, "invoice"));
         m.addSerializer(Plans.class, new RecurlyObjectsSerializer<Plans, Plan>(Plans.class, "plan"));
+        m.addSerializer(PlanRampIntervals.class, new RecurlyObjectsSerializer<PlanRampIntervals, PlanRampInterval>(PlanRampIntervals.class, "ramp_interval"));
+        m.addSerializer(SubscriptionRampIntervals.class, new RecurlyObjectsSerializer<SubscriptionRampIntervals, SubscriptionRampInterval>(SubscriptionRampIntervals.class, "ramp_interval"));
         m.addSerializer(RecurlyErrors.class, new RecurlyObjectsSerializer<RecurlyErrors, RecurlyError>(RecurlyErrors.class, "error"));
         m.addSerializer(ShippingAddresses.class, new RecurlyObjectsSerializer<ShippingAddresses, ShippingAddress>(ShippingAddresses.class, "shipping_address"));
         m.addSerializer(ShippingFees.class, new RecurlyObjectsSerializer<ShippingFees, ShippingFee>(ShippingFees.class, "shipping_fee"));
         m.addSerializer(SubscriptionAddOns.class, new RecurlyObjectsSerializer<SubscriptionAddOns, SubscriptionAddOn>(SubscriptionAddOns.class, "subscription_add_on"));
         m.addSerializer(Subscriptions.class, new RecurlyObjectsSerializer<Subscriptions, Subscription>(Subscriptions.class, "subscription"));
         m.addSerializer(Tiers.class, new RecurlyObjectsSerializer<Tiers,Tier>(Tiers.class, "tier"));
+        m.addSerializer(AddonPercentageTiers.class, new RecurlyObjectsSerializer<AddonPercentageTiers,AddonPercentageTier>(AddonPercentageTiers.class, "tier"));
+        m.addSerializer(CurrencyPercentageTiers.class, new RecurlyObjectsSerializer<CurrencyPercentageTiers,CurrencyPercentageTier>(CurrencyPercentageTiers.class, "percentage_tier"));
+        m.addSerializer(PercentageTiers.class, new RecurlyObjectsSerializer<PercentageTiers,PercentageTier>(PercentageTiers.class, "percentage_tier"));
         m.addSerializer(Transactions.class, new RecurlyObjectsSerializer<Transactions, Transaction>(Transactions.class, "transaction"));
         m.addSerializer(Usages.class, new RecurlyObjectsSerializer<Usages, Usage>(Usages.class, "usage"));
+        m.addSerializer(ExternalProductReferences.class, new RecurlyObjectsSerializer<ExternalProductReferences, ExternalProductReference>(ExternalProductReferences.class, "external_product_reference"));
+        m.addSerializer(BusinessEntities.class, new RecurlyObjectsSerializer<BusinessEntities, BusinessEntity>(BusinessEntities.class, "business_entity"));
         xmlMapper.registerModule(m);
 
         return xmlMapper;
@@ -272,5 +279,4 @@ public abstract class RecurlyObject {
         private static final XmlMapper xmlMapper = newXmlMapper();
 
     }
-
 }

@@ -37,13 +37,28 @@ import com.ning.billing.recurly.model.Adjustments;
 import com.ning.billing.recurly.model.BillingInfo;
 import com.ning.billing.recurly.model.BillingInfoVerification;
 import com.ning.billing.recurly.model.BillingInfos;
+import com.ning.billing.recurly.model.BusinessEntity;
+import com.ning.billing.recurly.model.BusinessEntities;
 import com.ning.billing.recurly.model.Coupon;
 import com.ning.billing.recurly.model.Coupons;
 import com.ning.billing.recurly.model.CreditPayments;
+import com.ning.billing.recurly.model.CustomFieldDefinition;
+import com.ning.billing.recurly.model.CustomFieldDefinitions;
 import com.ning.billing.recurly.model.DunningCampaign;
 import com.ning.billing.recurly.model.DunningCampaignBulkUpdate;
 import com.ning.billing.recurly.model.DunningCampaigns;
+import com.ning.billing.recurly.model.Entitlements;
+import com.ning.billing.recurly.model.ExternalProduct;
+import com.ning.billing.recurly.model.ExternalProductReference;
+import com.ning.billing.recurly.model.ExternalProductReferences;
+import com.ning.billing.recurly.model.ExternalProducts;
+import com.ning.billing.recurly.model.ExternalSubscription;
+import com.ning.billing.recurly.model.ExternalSubscriptions;
 import com.ning.billing.recurly.model.Errors;
+import com.ning.billing.recurly.model.ExternalAccount;
+import com.ning.billing.recurly.model.ExternalAccounts;
+import com.ning.billing.recurly.model.ExternalInvoice;
+import com.ning.billing.recurly.model.ExternalInvoices;
 import com.ning.billing.recurly.model.GiftCard;
 import com.ning.billing.recurly.model.GiftCards;
 import com.ning.billing.recurly.model.Invoice;
@@ -117,6 +132,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.math.BigDecimal;
 import java.net.ConnectException;
+import java.net.SocketTimeoutException;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -135,7 +151,7 @@ public class RecurlyClient {
     private static final Logger log = LoggerFactory.getLogger(RecurlyClient.class);
 
     public static final String RECURLY_DEBUG_KEY = "recurly.debug";
-    public static final String RECURLY_API_VERSION = "2.29";
+    public static final String RECURLY_API_VERSION = "2.99";
 
     private static final String X_RATELIMIT_REMAINING_HEADER_NAME = "X-RateLimit-Remaining";
     private static final String X_RECORDS_HEADER_NAME = "X-Records";
@@ -1132,6 +1148,294 @@ public class RecurlyClient {
     }
 
     ///////////////////////////////////////////////////////////////////////////
+    // Account's Entitlements
+
+    /**
+     * Get Entitlements of an account
+     * <p>
+     * Returns all entitlements for a given account.
+     *
+     * @param accountCode recurly account id
+     * @return List of entitlements for the given account on success, null otherwise
+     */
+    public Entitlements getEntitlements(final String accountCode) {
+        return doGET(Account.ACCOUNT_RESOURCE + "/" + urlEncode(accountCode) + Entitlements.ENTITLEMENTS_RESOURCE,
+                  Entitlements.class);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
+    // External Subscriptions
+
+    /**
+     * Get External Subscriptions of an account
+     * <p>
+     * Returns all external subscriptions for a given account.
+     *
+     * @param accountCode recurly account code
+     * @return List of external subscriptions for the given account on success, null otherwise
+     */
+    public ExternalSubscriptions getExternalSubscriptions(final String accountCode) {
+        return doGET(Account.ACCOUNT_RESOURCE + "/" + urlEncode(accountCode) + ExternalSubscriptions.EXTERNAL_SUBSCRIPTIONS_RESOURCE,
+                  ExternalSubscriptions.class);
+    }
+
+    /**
+     * Get External Subscriptions
+     * <p>
+     * Returns all external subscriptions on the site
+     *
+     * @return List of external subscriptions on the site
+     */
+    public ExternalSubscriptions getExternalSubscriptions() {
+        return doGET(ExternalSubscriptions.EXTERNAL_SUBSCRIPTIONS_RESOURCE, ExternalSubscriptions.class);
+    }
+
+    /**
+     * Get a specific External Subscription
+     * <p>
+     * Returns the requested external subscriptions
+     *
+     * @param externalSubscriptionUuid external subscription uuid
+     * @return The requested external subscription
+     */
+    public ExternalSubscription getExternalSubscription(final String externalSubscriptionUuid) {
+        return doGET(ExternalSubscriptions.EXTERNAL_SUBSCRIPTIONS_RESOURCE + "/" + urlEncode(externalSubscriptionUuid), ExternalSubscription.class);
+    }
+
+    /**
+     * Get External Accounts of an account
+     * <p>
+     * Returns all external accounts for a given account.
+     *
+     * @param accountCode recurly account code
+     * @return List of external accounts for the given account on success, null otherwise
+     */
+    public ExternalAccounts getExternalAccounts(final String accountCode) {
+        return doGET(Account.ACCOUNT_RESOURCE + "/" + urlEncode(accountCode) + ExternalAccounts.EXTERNAL_ACCOUNTS_RESOURCE,
+        ExternalAccounts.class);
+    }
+
+    /**
+     * Get External Account of an account
+     * <p>
+     * Returns an external account for a given account.
+     *
+     * @param accountCode recurly account code
+     * @param externalAccountUUID recurly external account UUID
+     * @return An external account for the given account and external account UUID on success, null otherwise
+     */
+    public ExternalAccount getExternalAccount(final String accountCode, final String externalAccountUUID) {
+        return doGET(Account.ACCOUNT_RESOURCE + "/" + urlEncode(accountCode) + ExternalAccounts.EXTERNAL_ACCOUNTS_RESOURCE + "/" + urlEncode(externalAccountUUID),
+        ExternalAccount.class);
+    }
+
+    /**
+     * Create an External Account for an account
+     * <p>
+     * Returns created external account for a given account.
+     *
+     * @param accountCode recurly account code
+     * @param externalAccount external account
+     * @return Created external account for the given account on success, null otherwise
+     */
+    public ExternalAccount createExternalAccount(final String accountCode, final ExternalAccount externalAccount) {
+        return doPOST(Account.ACCOUNT_RESOURCE + "/" + urlEncode(accountCode) + ExternalAccounts.EXTERNAL_ACCOUNTS_RESOURCE,
+        externalAccount,
+        ExternalAccount.class);
+    }
+
+    /**
+     * Update an External Account for an account
+     * <p>
+     * Returns updated external account for a given account.
+     *
+     * @param accountCode recurly account code
+     * @param externalAccountUUID recurly external account UUID
+     * @param externalAccount external account
+     * @return Updated external account for the given account on success, null otherwise
+     */
+    public ExternalAccount updateExternalAccount(final String accountCode, final String externalAccountUUID, final ExternalAccount externalAccount) {
+        return doPUT(Account.ACCOUNT_RESOURCE + "/" + urlEncode(accountCode) + ExternalAccounts.EXTERNAL_ACCOUNTS_RESOURCE + "/" + urlEncode(externalAccountUUID),
+        externalAccount,
+        ExternalAccount.class);
+    }
+
+    /**
+     * Delete an External Account of an account
+     * <p>
+     * Returns deleted external account for a given account.
+     *
+     * @param accountCode recurly account code
+     * @param externalAccountUUID recurly external account UUID
+     */
+    public void deleteExternalAccount(final String accountCode, final String externalAccountUUID) {
+        doDELETE(Account.ACCOUNT_RESOURCE + "/" + urlEncode(accountCode) + ExternalAccounts.EXTERNAL_ACCOUNTS_RESOURCE + "/" + urlEncode(externalAccountUUID));
+    }
+
+    /**
+     * Get External Invoices
+     * <p>
+     * Returns all external invoices on the site
+     *
+     * @return List of external invoices on the site
+     */
+    public ExternalInvoices getExternalInvoices() {
+        return doGET(ExternalInvoices.EXTERNAL_INVOICES_RESOURCE, ExternalInvoices.class);
+    }
+
+    /**
+     * Get External Invoices of an account
+     * <p>
+     * Returns all external invoices for a given account.
+     *
+     * @param accountCode recurly account code
+     * @return List of external invoices for the given account on success, null otherwise
+     */
+    public ExternalInvoices getExternalInvoices(final String accountCode) {
+        return doGET(Account.ACCOUNT_RESOURCE + "/" + urlEncode(accountCode) + ExternalInvoices.EXTERNAL_INVOICES_RESOURCE,
+        ExternalInvoices.class);
+    }
+
+    /**
+     * Get External Invoices of an external subscription
+     * <p>
+     * Returns all external invoices for a given external subscription.
+     *
+     * @param externalSubscriptionUUID recurly external subscription uuid
+     * @return List of external invoices for the given external subscription on success, null otherwise
+     */
+    public ExternalInvoices getExternalInvoicesByExternalSubscription(final String externalSubscriptionUUID) {
+        return doGET(ExternalSubscriptions.EXTERNAL_SUBSCRIPTIONS_RESOURCE + "/" + urlEncode(externalSubscriptionUUID) + ExternalInvoices.EXTERNAL_INVOICES_RESOURCE,
+        ExternalInvoices.class);
+    }
+
+    /**
+     * Get a specific External Invoice
+     * <p>
+     * Returns the requested external invoice
+     *
+     * @param externalInvoiceUuid external invoice uuid
+     * @return The requested external invoice
+     */
+    public ExternalInvoice getExternalInvoice(final String externalInvoiceUuid) {
+        return doGET(ExternalInvoices.EXTERNAL_INVOICES_RESOURCE + "/" + urlEncode(externalInvoiceUuid), ExternalInvoice.class);
+    }
+
+    /**
+     * Get External Products
+     * <p>
+     * Returns all external products on the site
+     *
+     * @return List of external products on the site
+     */
+    public ExternalProducts getExternalProducts() {
+        return doGET(ExternalProducts.EXTERNAL_PRODUCTS_RESOURCE, ExternalProducts.class);
+    }
+
+    /**
+     * Get a specific External Product
+     * <p>
+     * Returns the requested external product
+     *
+     * @param externalProductUuid external product uuid
+     * @return The requested external product
+     */
+    public ExternalProduct getExternalProduct(final String externalProductUuid) {
+        return doGET(ExternalProducts.EXTERNAL_PRODUCTS_RESOURCE + "/" + urlEncode(externalProductUuid), ExternalProduct.class);
+    }
+
+    /**
+     * Create an External Product
+     * <p>
+     * Returns created external product.
+     *
+     * @param externalProduct external product
+     * @return Created external product on success, null otherwise
+     */
+    public ExternalProduct createExternalProduct(final ExternalProduct externalProduct) {
+        return doPOST(ExternalProducts.EXTERNAL_PRODUCTS_RESOURCE,
+        externalProduct,
+        ExternalProduct.class);
+    }
+
+    /**
+     * Update an External Product
+     * <p>
+     * Returns updated external product.
+     *
+     * @param externalProductUUID recurly external product UUID
+     * @param externalAccount external product
+     * @return Updated external account for the given account on success, null otherwise
+     */
+    public ExternalProduct updateExternalProduct(final String externalProductUUID, final ExternalProduct externalProduct) {
+        return doPUT(ExternalProducts.EXTERNAL_PRODUCTS_RESOURCE + "/" + urlEncode(externalProductUUID),
+        externalProduct,
+        ExternalProduct.class);
+    }
+
+    /**
+     * Delete an External Product
+     * <p>
+     *
+     * @param externalProductUUID recurly external product UUID
+     */
+    public void deleteExternalProduct(final String externalProductUUID) {
+        doDELETE(ExternalProducts.EXTERNAL_PRODUCTS_RESOURCE + "/" + urlEncode(externalProductUUID));
+    }
+
+    /**
+     * Get External Product References
+     * <p>
+     * Returns all external product references on the site
+     *
+     * @param externalProductUUID external product uuid
+     * @return List of external product references on the site
+     */
+    public ExternalProductReferences getExternalProductReferences(final String externalProductUUID) {
+        return doGET(ExternalProducts.EXTERNAL_PRODUCTS_RESOURCE + "/" + urlEncode(externalProductUUID) + ExternalProductReferences.EXTERNAL_PRODUCT_REFERENCES_RESOURCE, ExternalProductReferences.class);
+    }
+
+    /**
+     * Get a specific External Product Reference
+     * <p>
+     * Returns the requested external product reference
+     *
+     * @param externalProductUUID external product uuid
+     * @param externalProductReferenceUUID external product uuid
+     * @return The requested external product
+     */
+    public ExternalProductReference getExternalProductReference(final String externalProductUUID, final String externalProductReferenceUUID) {
+        return doGET(ExternalProducts.EXTERNAL_PRODUCTS_RESOURCE + "/" + urlEncode(externalProductUUID) + ExternalProductReferences.EXTERNAL_PRODUCT_REFERENCES_RESOURCE + "/" + urlEncode(externalProductReferenceUUID), ExternalProductReference.class);
+    }
+
+    /**
+     * Create an External Product Reference
+     * <p>
+     * Returns created external product reference.
+     *
+     * @param externalProductUUID recurly external product UUID
+     * @param externalProductReference external product reference
+     * @return Created external product reference on success, null otherwise
+     */
+    public ExternalProductReference createExternalProductReference(final String externalProductUUID, final ExternalProductReference externalProductReference) {
+        return doPOST(ExternalProducts.EXTERNAL_PRODUCTS_RESOURCE + "/" + urlEncode(externalProductUUID) + ExternalProductReferences.EXTERNAL_PRODUCT_REFERENCES_RESOURCE,
+        externalProductReference,
+        ExternalProductReference.class);
+    }
+
+    /**
+     * Delete an External Product Reference
+     * <p>
+     * Returns deleted external product reference.
+     *
+     * @param externalProductUUID recurly external product UUID
+     * @param externalProductReferenceUUID recurly external product reference UUID
+     */
+    public void deleteExternalProductReference(final String externalProductUUID, final String externalProductReferenceUUID) {
+        doDELETE(ExternalProducts.EXTERNAL_PRODUCTS_RESOURCE + "/" + urlEncode(externalProductUUID) + ExternalProductReferences.EXTERNAL_PRODUCT_REFERENCES_RESOURCE + "/" + urlEncode(externalProductReferenceUUID));
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
     // User transactions
 
     /**
@@ -1631,7 +1935,16 @@ public class RecurlyClient {
       Invoice request = new Invoice();
       request.setBillingInfoUuid(billingInfoUuid);
       return doPUT(Invoices.INVOICES_RESOURCE + "/" + urlEncode(invoiceId) + "/collect", request, Invoice.class);
-  }
+    }
+
+    /**
+     * Apply Account Credit Balance to Collectible Charge Invoice
+     *
+     * @param invoiceId String Recurly Invoice ID
+     */
+    public Invoice applyCreditBalance(final String invoiceId) {
+        return doPUT(Invoices.INVOICES_RESOURCE + "/" + urlEncode(invoiceId) + "/apply_credit_balance", null, Invoice.class);
+    }
 
     /**
      * Void Invoice
@@ -2518,6 +2831,95 @@ public class RecurlyClient {
     }
 
     ///////////////////////////////////////////////////////////////////////////
+    // Custom Field Definitions
+
+    /**
+     * Get Custom Field Definitions for the site
+     * <p>
+     * https://developers.recurly.com/api-v2/v2.29/index.html#operation/list_custom_field_definitions
+     *
+     * @return CustomFieldDefinitions on success, null otherwise
+     */
+    public CustomFieldDefinitions getCustomFieldDefinitions() {
+        return getCustomFieldDefinitions(null);
+    }
+
+    /**
+     * Get Custom Field Definitions for the site by RelatedType
+     * <p>
+     *
+     * @param relatedType {@link com.ning.billing.recurly.model.CustomFieldDefinitions.CustomFieldDefinitionRelatedType}
+     * @return the custom_field_definitions of specific RelatedType for the site
+     */
+    public CustomFieldDefinitions getCustomFieldDefinitions(final CustomFieldDefinitions.CustomFieldDefinitionRelatedType relatedType) {
+        final QueryParams params = new QueryParams();
+        if (relatedType != null) params.put("related_type", relatedType.getRelatedType());
+
+        return doGET(CustomFieldDefinitions.CUSTOM_FIELD_DEFINITIONS_RESOURCE, CustomFieldDefinitions.class, params);
+    }
+
+    /**
+     * Look up a Custom Field Definition
+     * <p>
+     * https://recurly.com/developers/api-v2/v2.29/index.html#operation/get_custom_field_definition
+     *
+     * @param customFieldId The ID for the CustomFieldDefinition
+     * @return The {@link CustomFieldDefinition} object as identified by the passed in ID
+     */
+    public CustomFieldDefinition getCustomFieldDefinition(final String customFieldId) {
+        if (customFieldId == null || customFieldId.isEmpty())
+            throw new RuntimeException("customFieldId cannot be empty!");
+
+        return doGET(CustomFieldDefinitions.CUSTOM_FIELD_DEFINITIONS_RESOURCE + "/" + urlEncode(customFieldId), CustomFieldDefinition.class);
+    }
+
+
+    ///////////////////////////////////////////////////////////////////////////
+
+
+    ///////////////////////////////////////////////////////////////////////////
+    // Multiple Business Entities
+
+    /**
+     * Get Business Entities
+     * <p>
+     * Returns all business entities on the site
+     *
+     * @return List of business entities on the site
+     */
+    public BusinessEntities getBusinessEntities() {
+        return doGET(BusinessEntities.BUSINESS_ENTITIES_RESOURCE, BusinessEntities.class);
+    }
+
+    /**
+     * Get a specific Busines Entity
+     * <p>
+     * Returns the requested business entity
+     *
+     * @param businessEntityUUID business entity uuid
+     * @return The requested business entity
+     */
+    public BusinessEntity getBusinessEntity(final String businessEntityUUID) {
+        return doGET(BusinessEntities.BUSINESS_ENTITIES_RESOURCE + "/" + urlEncode(businessEntityUUID), BusinessEntity.class);
+    }
+
+    /**
+     * Get business entity's invoices
+     * <p>
+     * Returns the business entity's invoices
+     *
+     * @param businessEntityUUID business entity uuid
+     * @param state {@link InvoiceState} state of the invoices
+     * @param params {@link QueryParams}
+     * @return the invoices associated with this business entity on success, null otherwise
+     */
+    public Invoices getBusinessEntityInvoices(final String businessEntityUUID, final InvoiceState state, final QueryParams params) {
+        if (state != null) params.put("state", state.getType());
+        return doGET(BusinessEntities.BUSINESS_ENTITIES_RESOURCE + "/" + urlEncode(businessEntityUUID) + Invoices.INVOICES_RESOURCE,
+                Invoices.class, params);
+    }
+
+    ///////////////////////////////////////////////////////////////////////////
 
     private InputStream doGETPdf(final String resource) {
         return doGETPdfWithFullURL(baseUrl + resource);
@@ -2678,7 +3080,8 @@ public class RecurlyClient {
             return callRecurlyXmlContent(builder, clazz);
         } catch (IOException e) {
             if (e instanceof ConnectException || e instanceof NoHttpResponseException
-                    || e instanceof ConnectTimeoutException || e instanceof SSLException) {
+                    || e instanceof ConnectTimeoutException || e instanceof SSLException
+                    || e instanceof SocketTimeoutException) {
                 // See https://github.com/killbilling/recurly-java-library/issues/185
                 throw new ConnectionErrorException(e);
             }

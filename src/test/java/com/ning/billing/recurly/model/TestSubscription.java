@@ -17,18 +17,17 @@
 
 package com.ning.billing.recurly.model;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-
-import com.ning.billing.recurly.TestUtils;
-import org.joda.time.DateTime;
-import org.testng.Assert;
-import org.testng.annotations.Test;
-
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.Assert.assertTrue;
+
+import com.ning.billing.recurly.TestUtils;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import org.joda.time.DateTime;
+import org.testng.Assert;
+import org.testng.annotations.Test;
 
 public class TestSubscription extends TestModelBase {
 
@@ -88,6 +87,7 @@ public class TestSubscription extends TestModelBase {
                                         "    <subscription_add_ons type=\"array\">\n" +
                                         "    </subscription_add_ons>\n" +
                                         "  </pending_subscription>\n" +
+                                        "  <gateway_code>test_gateway</gateway_code>\n" +
                                         "</subscription>";
 
         final Subscription subscription = verifySubscription(subscriptionData);
@@ -100,6 +100,8 @@ public class TestSubscription extends TestModelBase {
         codes.add("abc");
         assertEquals(subscription.getCouponCodes(), codes);
         assertEquals((int) subscription.getTaxInCents(), (int) 394);
+
+        assertEquals(subscription.getGatewayCode(), "test_gateway");
     }
 
     @Test(groups = "fast")
@@ -236,6 +238,91 @@ public class TestSubscription extends TestModelBase {
     }
 
     @Test(groups = "fast")
+    public void testDeserializationWithRampIntervals() throws Exception {
+        // See https://dev.recurly.com/docs/list-subscriptions
+        final String subscriptionData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                                        "<subscription href=\"https://api.recurly.com/v2/subscriptions/44f83d7cba354d5b84812419f923ea96\">\n" +
+                                        "  <account href=\"https://api.recurly.com/v2/accounts/1\"/>\n" +
+                                        "  <plan href=\"https://api.recurly.com/v2/plans/gold\">\n" +
+                                        "    <plan_code>gold</plan_code>\n" +
+                                        "    <name>Gold plan</name>\n" +
+                                        "  </plan>\n" +
+                                        "  <uuid>44f83d7cba354d5b84812419f923ea96</uuid>\n" +
+                                        "  <state>active</state>\n" +
+                                        "  <ramp_intervals type=\"array\">\n" +
+                                        "    <ramp_interval>\n" +
+                                        "      <starting_billing_cycle type=\"integer\">1</starting_billing_cycle>\n" +
+                                        "      <unit_amount_in_cents type=\"integer\">2000</unit_amount_in_cents>\n" +
+                                        "      <remaining_billing_cycles type=\"integer\">0</remaining_billing_cycles>\n" +
+                                        "      <starting_on type=\"dateTime\">2011-06-27T07:00:00Z</starting_on>\n" +
+                                        "      <ending_on type=\"dateTime\">2011-07-27T07:00:00Z</ending_on>\n" +
+                                        "    </ramp_interval>\n" +
+                                        "    <ramp_interval>\n" +
+                                        "      <starting_billing_cycle type=\"integer\">2</starting_billing_cycle>\n" +
+                                        "      <unit_amount_in_cents type=\"integer\">4000</unit_amount_in_cents>\n" +
+                                        "      <remaining_billing_cycles type=\"integer\">5</remaining_billing_cycles>\n" +
+                                        "      <starting_on type=\"dateTime\">2011-07-27T07:00:00Z</starting_on>\n" +
+                                        "      <ending_on type=\"dateTime\">2011-08-27T07:00:00Z</ending_on>\n" +
+                                        "    </ramp_interval>\n" +
+                                        "    <ramp_interval>\n" +
+                                        "      <starting_billing_cycle type=\"integer\">7</starting_billing_cycle>\n" +
+                                        "      <unit_amount_in_cents type=\"integer\">7000</unit_amount_in_cents>\n" +
+                                        "      <remaining_billing_cycles nil=\"nil\"/>\n" +
+                                        "      <starting_on type=\"dateTime\">2011-08-27T07:00:00Z</starting_on>\n" +
+                                        "      <ending_on nil=\"nil\"></ending_on>\n" +
+                                        "    </ramp_interval>\n" +
+                                        "  </ramp_intervals>\n" +
+                                        "  <unit_amount_in_cents type=\"integer\">2000</unit_amount_in_cents>\n" +
+                                        "  <currency>EUR</currency>\n" +
+                                        "  <quantity type=\"integer\">1</quantity>\n" +
+                                        "  <activated_at type=\"dateTime\">2011-05-27T07:00:00Z</activated_at>\n" +
+                                        "  <updated_at type=\"dateTime\">2011-05-27T07:00:00Z</updated_at>\n" +
+                                        "  <canceled_at nil=\"nil\"></canceled_at>\n" +
+                                        "  <expires_at nil=\"nil\"></expires_at>\n" +
+                                        "  <current_period_started_at type=\"dateTime\">2011-06-27T07:00:00Z</current_period_started_at>\n" +
+                                        "  <current_period_ends_at type=\"dateTime\">2010-07-27T07:00:00Z</current_period_ends_at>\n" +
+                                        "  <trial_started_at nil=\"nil\"></trial_started_at>\n" +
+                                        "  <trial_ends_at nil=\"nil\"></trial_ends_at>\n" +
+                                        "  <starts_at>2010-07-28T07:00:00Z</starts_at>\n" +
+                                        "  <a name=\"cancel\" href=\"https://api.recurly.com/v2/subscriptions/44f83d7cba354d5b84812419f923ea96/cancel\" method=\"put\"/>\n" +
+                                        "  <a name=\"terminate\" href=\"https://api.recurly.com/v2/subscriptions/44f83d7cba354d5b84812419f923ea96/terminate\" method=\"put\"/>\n" +
+                                        "  <a name=\"postpone\" href=\"https://api.recurly.com/v2/subscriptions/44f83d7cba354d5b84812419f923ea96/postpone\" method=\"put\"/>\n" +
+                                        "  <collection_method>manual</collection_method>\n" +
+                                        "  <net_terms type=\"integer\">10</net_terms>\n" +
+                                        "  <po_number>PO19384</po_number>\n" +
+                                        "  <tax_in_cents type=\"integer\">394</tax_in_cents>\n" +
+                                        "  <tax_type>usst</tax_type>\n" +
+                                        "  <tax_region>CA</tax_region>\n" +
+                                        "  <tax_rate type=\"float\">0.0875</tax_rate>\n" +
+                                        "  <revenue_schedule_type>evenly</revenue_schedule_type>\n" +
+                                        "  <first_renewal_date type=\"dateTime\">2011-07-01T07:00:00Z</first_renewal_date>\n" +
+                                        "  <started_with_gift type=\"boolean\">true</started_with_gift>\n" +
+                                        "  <converted_at type=\"dateTime\">2017-06-27T00:00:00Z</converted_at>" +
+                                        "  <no_billing_info_reason>plan_free_trial</no_billing_info_reason>" +
+                                        "  <imported_trial type=\"boolean\">true</imported_trial>" +
+                                        "  <subscription_add_ons type=\"array\">\n" +
+                                        "  </subscription_add_ons>\n" +
+                                        "</subscription>";
+
+        final Subscription subscription = xmlMapper.readValue(subscriptionData, Subscription.class);
+        final SubscriptionRampIntervals subRamps = subscription.getRampIntervals();
+
+        Assert.assertEquals(subRamps.size(), 3);
+
+        Assert.assertEquals((int) subRamps.get(0).getUnitAmountInCents(), 2000);
+        Assert.assertEquals((int) subRamps.get(1).getUnitAmountInCents(), 4000);
+        Assert.assertEquals((int) subRamps.get(2).getUnitAmountInCents(), 7000);
+
+        Assert.assertEquals(subRamps.get(0).getStartingOn(), new DateTime("2011-06-27T07:00:00Z"));
+        Assert.assertEquals(subRamps.get(1).getStartingOn(), new DateTime("2011-07-27T07:00:00Z"));
+        Assert.assertEquals(subRamps.get(2).getStartingOn(), new DateTime("2011-08-27T07:00:00Z"));
+
+        Assert.assertEquals(subRamps.get(0).getEndingOn(), new DateTime("2011-07-27T07:00:00Z"));
+        Assert.assertEquals(subRamps.get(1).getEndingOn(), new DateTime("2011-08-27T07:00:00Z"));
+        Assert.assertNull(subRamps.get(2).getEndingOn());
+    }
+
+    @Test(groups = "fast")
     public void testSerializationWithSingleCoupon() throws Exception {
         Subscription subscription = TestUtils.createRandomSubscription(0);
         subscription.setCouponCode("my-coupon");
@@ -277,6 +364,71 @@ public class TestSubscription extends TestModelBase {
         assertNotEquals(System.identityHashCode(subscription), System.identityHashCode(otherSubscription));
         assertEquals(subscription.hashCode(), otherSubscription.hashCode());
         assertEquals(subscription, otherSubscription);
+    }
+
+    @Test(groups = "fast")
+    public void testDeserializationWithActionResult() throws Exception {
+        // See https://dev.recurly.com/docs/list-subscriptions
+        final String subscriptionData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                                        "<subscription href=\"https://api.recurly.com/v2/subscriptions/44f83d7cba354d5b84812419f923ea96\">\n" +
+                                        "  <account href=\"https://api.recurly.com/v2/accounts/1\"/>\n" +
+                                        "  <plan href=\"https://api.recurly.com/v2/plans/gold\">\n" +
+                                        "    <plan_code>gold</plan_code>\n" +
+                                        "    <name>Gold plan</name>\n" +
+                                        "  </plan>\n" +
+                                        "  <uuid>44f83d7cba354d5b84812419f923ea96</uuid>\n" +
+                                        "  <state>active</state>\n" +
+                                        "  <unit_amount_in_cents type=\"integer\">800</unit_amount_in_cents>\n" +
+                                        "  <currency>EUR</currency>\n" +
+                                        "  <quantity type=\"integer\">1</quantity>\n" +
+                                        "  <activated_at type=\"dateTime\">2011-05-27T07:00:00Z</activated_at>\n" +
+                                        "  <updated_at type=\"dateTime\">2011-05-27T07:00:00Z</updated_at>\n" +
+                                        "  <canceled_at nil=\"nil\"></canceled_at>\n" +
+                                        "  <expires_at nil=\"nil\"></expires_at>\n" +
+                                        "  <current_period_started_at type=\"dateTime\">2011-06-27T07:00:00Z</current_period_started_at>\n" +
+                                        "  <current_period_ends_at type=\"dateTime\">2010-07-27T07:00:00Z</current_period_ends_at>\n" +
+                                        "  <trial_started_at nil=\"nil\"></trial_started_at>\n" +
+                                        "  <trial_ends_at nil=\"nil\"></trial_ends_at>\n" +
+                                        "  <starts_at>2010-07-28T07:00:00Z</starts_at>\n" +
+                                        "  <a name=\"cancel\" href=\"https://api.recurly.com/v2/subscriptions/44f83d7cba354d5b84812419f923ea96/cancel\" method=\"put\"/>\n" +
+                                        "  <a name=\"terminate\" href=\"https://api.recurly.com/v2/subscriptions/44f83d7cba354d5b84812419f923ea96/terminate\" method=\"put\"/>\n" +
+                                        "  <a name=\"postpone\" href=\"https://api.recurly.com/v2/subscriptions/44f83d7cba354d5b84812419f923ea96/postpone\" method=\"put\"/>\n" +
+                                        "  <collection_method>manual</collection_method>\n" +
+                                        "  <net_terms type=\"integer\">10</net_terms>\n" +
+                                        "  <po_number>PO19384</po_number>\n" +
+                                        "  <tax_in_cents type=\"integer\">394</tax_in_cents>\n" +
+                                        "  <tax_type>usst</tax_type>\n" +
+                                        "  <tax_region>CA</tax_region>\n" +
+                                        "  <tax_rate type=\"float\">0.0875</tax_rate>\n" +
+                                        "  <revenue_schedule_type>evenly</revenue_schedule_type>\n" +
+                                        "  <first_renewal_date type=\"dateTime\">2011-07-01T07:00:00Z</first_renewal_date>\n" +
+                                        "  <started_with_gift type=\"boolean\">true</started_with_gift>\n" +
+                                        "  <converted_at type=\"dateTime\">2017-06-27T00:00:00Z</converted_at>" +
+                                        "  <no_billing_info_reason>plan_free_trial</no_billing_info_reason>" +
+                                        "  <imported_trial type=\"boolean\">true</imported_trial>" +
+                                        "  <subscription_add_ons type=\"array\">\n" +
+                                        "  </subscription_add_ons>\n" +
+                                        "  <coupon_codes type=\"array\">\n" +
+                                        "    <coupon_code>123</coupon_code>\n" +
+                                        "    <coupon_code>abc</coupon_code>\n" +
+                                        "  </coupon_codes>\n" +
+                                        "  <pending_subscription type=\"subscription\">\n" +
+                                        "    <plan href=\"https://api.recurly.com/v2/plans/silver\">\n" +
+                                        "      <plan_code>silver</plan_code>\n" +
+                                        "      <name>Silver plan</name>\n" +
+                                        "    </plan>\n" +
+                                        "    <unit_amount_in_cents type=\"integer\">400</unit_amount_in_cents>\n" +
+                                        "    <quantity type=\"integer\">1</quantity>\n" +
+                                        "    <subscription_add_ons type=\"array\">\n" +
+                                        "    </subscription_add_ons>\n" +
+                                        "  </pending_subscription>\n" +
+                                        "  <action_result>example</action_result>\n" +
+                                        "</subscription>";
+
+        final Subscription subscription = verifySubscription(subscriptionData);
+        verifyPaginationData(subscription);
+        verifyPendingSubscription(subscription);
+        Assert.assertEquals(subscription.getActionResult(), "example");
     }
 
     private void verifySubscriptionAddons(final Subscription subscription) {

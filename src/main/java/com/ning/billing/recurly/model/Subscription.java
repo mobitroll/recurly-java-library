@@ -19,14 +19,13 @@ package com.ning.billing.recurly.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.base.Objects;
-import org.joda.time.DateTime;
-
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import javax.xml.bind.annotation.XmlRootElement;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
+import javax.xml.bind.annotation.XmlRootElement;
+import org.joda.time.DateTime;
 
 @XmlRootElement(name = "subscription")
 public class Subscription extends AbstractSubscription {
@@ -110,16 +109,16 @@ public class Subscription extends AbstractSubscription {
     //Purchase Order Number
     @XmlElement(name = "po_number")
     private String poNumber;
-    
+
     @XmlElement(name = "terms_and_conditions")
     private String termsAndConditions;
-    
+
     @XmlElement(name = "customer_notes")
     private String customerNotes;
 
     @XmlElement(name = "first_renewal_date")
     private DateTime firstRenewalDate;
-    
+
     @XmlElement(name = "bulk")
     private Boolean bulk;
 
@@ -188,6 +187,24 @@ public class Subscription extends AbstractSubscription {
 
     @XmlElement(name = "transaction_type")
     private String transactionType;
+
+    @XmlElementWrapper(name = "ramp_intervals")
+    @XmlElement(name = "ramp_interval")
+    private SubscriptionRampIntervals rampIntervals;
+
+    @XmlElement(name = "gateway_code")
+    private String gatewayCode;
+
+    @XmlElement(name = "action_result")
+    private String actionResult;
+
+    public SubscriptionRampIntervals getRampIntervals() {
+        return rampIntervals;
+    }
+
+    public void setRampIntervals(final SubscriptionRampIntervals rampIntervals) {
+        this.rampIntervals = rampIntervals;
+    }
 
     public Account getAccount() {
         if (account != null && account.getHref() != null && !account.getHref().isEmpty()) {
@@ -602,6 +619,22 @@ public class Subscription extends AbstractSubscription {
         this.transactionType = stringOrNull(transactionType);
     }
 
+    public String getGatewayCode() {
+        return gatewayCode;
+    }
+
+    public void setGatewayCode(final Object gatewayCode) {
+        this.gatewayCode = stringOrNull(gatewayCode);
+    }
+
+    public String getActionResult() {
+        return actionResult;
+    }
+
+    public void setActionResult(final Object actionResult) {
+        this.actionResult = stringOrNull(actionResult);
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -625,6 +658,7 @@ public class Subscription extends AbstractSubscription {
         sb.append(", trialStartedAt=").append(trialStartedAt);
         sb.append(", trialEndsAt=").append(trialEndsAt);
         sb.append(", startsAt=").append(startsAt);
+        sb.append(", rampIntervals=").append(rampIntervals);
         sb.append(", addOns=").append(addOns);
         sb.append(", pendingSubscription=").append(pendingSubscription);
         sb.append(", firstRenewalDate=").append(firstRenewalDate);
@@ -655,6 +689,8 @@ public class Subscription extends AbstractSubscription {
         sb.append(", nextBillDate=").append(nextBillDate);
         sb.append(", currentPeriodStartedAt=").append(currentPeriodStartedAt);
         sb.append(", currentPeriodEndsAt=").append(currentPeriodEndsAt);
+        sb.append(", gatewayCode=").append(gatewayCode);
+        sb.append(", actionResult=").append(actionResult);
         sb.append(", transactionType='").append(transactionType).append('\'');
         sb.append('}');
         return sb.toString();
@@ -821,6 +857,10 @@ public class Subscription extends AbstractSubscription {
             return false;
         }
 
+        if (gatewayCode != null ? !gatewayCode.equals(that.gatewayCode) : that.gatewayCode != null) {
+            return false;
+        }
+
         return true;
     }
 
@@ -843,6 +883,7 @@ public class Subscription extends AbstractSubscription {
                 currentPeriodEndsAt,
                 trialStartedAt,
                 trialEndsAt,
+                rampIntervals,
                 addOns,
                 pendingSubscription,
                 startsAt,
@@ -876,7 +917,9 @@ public class Subscription extends AbstractSubscription {
                 nextBillDate,
                 currentPeriodStartedAt,
                 currentPeriodEndsAt,
-                transactionType
+                transactionType,
+                gatewayCode,
+                actionResult
         );
     }
 

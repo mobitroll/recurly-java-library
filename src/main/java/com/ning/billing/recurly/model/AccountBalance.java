@@ -38,6 +38,12 @@ public class AccountBalance extends RecurlyObject {
     @XmlElement(name = "balance_in_cents")
     private RecurlyUnitCurrency balanceInCents;
 
+    @XmlElement(name = "processing_prepayment_balance_in_cents")
+    private RecurlyUnitCurrency processingPrepaymentBalanceInCents;
+
+    @XmlElement(name = "available_credit_balance_in_cents")
+    private RecurlyUnitCurrency availableCreditBalanceInCents;
+
     public Boolean getPastDue() {
         return pastDue;
     }
@@ -50,11 +56,25 @@ public class AccountBalance extends RecurlyObject {
 
     public void setBalanceInCents(final RecurlyUnitCurrency balanceInCents) { this.balanceInCents = balanceInCents; }
 
+    public RecurlyUnitCurrency getProcessingPrepaymentBalanceInCents() {
+        return processingPrepaymentBalanceInCents;
+    }
+
+    public void setProcessingPrepaymentBalanceInCents(final RecurlyUnitCurrency processingPrepaymentBalanceInCents) { this.processingPrepaymentBalanceInCents = processingPrepaymentBalanceInCents; }
+
+    public RecurlyUnitCurrency getAvailableCreditBalanceInCents() {
+        return availableCreditBalanceInCents;
+    }
+
+    public void setAvailableCreditBalanceInCents(final RecurlyUnitCurrency availableCreditBalanceInCents) { this.availableCreditBalanceInCents = availableCreditBalanceInCents; }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("AccountBalance{");
         sb.append(", pastDue=").append(pastDue);
         sb.append(", balanceInCents=").append(balanceInCents);
+        sb.append(", processingPrepaymentBalanceInCents=").append(processingPrepaymentBalanceInCents);
+        sb.append(", availableCreditBalanceInCents=").append(availableCreditBalanceInCents);
         sb.append('}');
         return sb.toString();
     }
@@ -72,6 +92,12 @@ public class AccountBalance extends RecurlyObject {
         if (balanceInCents != null ? !balanceInCents.equals(accountBalance.balanceInCents) : accountBalance.balanceInCents != null) {
             return false;
         }
+        if (processingPrepaymentBalanceInCents != null ? !processingPrepaymentBalanceInCents.equals(accountBalance.processingPrepaymentBalanceInCents) : accountBalance.processingPrepaymentBalanceInCents != null) {
+            return false;
+        }
+        if (availableCreditBalanceInCents != null ? !availableCreditBalanceInCents.equals(accountBalance.availableCreditBalanceInCents) : accountBalance.availableCreditBalanceInCents != null) {
+            return false;
+        }
 
         return true;
     }
@@ -80,7 +106,9 @@ public class AccountBalance extends RecurlyObject {
     public int hashCode() {
         return Objects.hashCode(
                 pastDue,
-                balanceInCents
+                balanceInCents,
+                processingPrepaymentBalanceInCents,
+                availableCreditBalanceInCents
         );
     }
 

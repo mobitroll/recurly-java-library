@@ -36,6 +36,7 @@ public class TestInvoice extends TestModelBase {
                                    + "<invoice href=\"https://api.recurly.com/v2/invoices/e3f0a9e084a2468480d00ee61b090d4d\">\n"
                                    + "  <account href=\"https://api.recurly.com/v2/accounts/1\"/>\n"
                                    + "  <original_invoices href=\"https://api.recurly.com/v2/invoices/1192/original_invoices\"/>\n"
+                                   + "  <business_entity href=\"https://api.recurly.com/v2/business_entities/1\"/>\n"
                                    + "  <uuid>421f7b7d414e4c6792938e7c49d552e9</uuid>\n"
                                    + "  <state>open</state>\n"
                                    + "  <invoice_number type=\"integer\">1402</invoice_number>\n"
@@ -62,6 +63,7 @@ public class TestInvoice extends TestModelBase {
                                    + "      <tax_in_cents type=\"integer\">20</tax_in_cents>\n"
                                    + "    </tax_detail>\n"
                                    + "  </tax_details>\n"
+                                   + "  <used_tax_service>true</used_tax_service>\n"
                                    + "  <surcharge_in_cents type=\"integer\">100</surcharge_in_cents>\n"
                                    + "  <created_at type=\"dateTime\">2011-08-25T12:00:00Z</created_at>\n"
                                    + "  <updated_at type=\"dateTime\">2011-08-25T12:00:00Z</updated_at>\n"
@@ -122,6 +124,7 @@ public class TestInvoice extends TestModelBase {
         final Invoice invoice = xmlMapper.readValue(invoiceData, Invoice.class);
 
         Assert.assertEquals(invoice.getAccount().getHref(), "https://api.recurly.com/v2/accounts/1");
+        Assert.assertEquals(invoice.getBusinessEntity().getHref(), "https://api.recurly.com/v2/business_entities/1");
         Assert.assertTrue(invoice.hasOriginalInvoices());
         Assert.assertEquals(invoice.getUuid(), "421f7b7d414e4c6792938e7c49d552e9");
         Assert.assertEquals(invoice.getState(), "open");
@@ -140,6 +143,7 @@ public class TestInvoice extends TestModelBase {
         Assert.assertEquals(invoice.getTaxType(), "usst");
         Assert.assertEquals(invoice.getTaxRegion(), "CA");
         Assert.assertEquals(invoice.getTaxRate(), new BigDecimal("0.0875"));
+        Assert.assertTrue(invoice.getUsedTaxService());
         Assert.assertEquals(invoice.getCreatedAt(), new DateTime("2011-08-25T12:00:00Z"));
         Assert.assertEquals(invoice.getUpdatedAt(), new DateTime("2011-08-25T12:00:00Z"));
         Assert.assertEquals(invoice.getClosedAt(), new DateTime("2011-08-25T12:00:00Z"));

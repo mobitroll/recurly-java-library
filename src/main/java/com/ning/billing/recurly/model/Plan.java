@@ -19,6 +19,7 @@ package com.ning.billing.recurly.model;
 
 import com.google.common.base.Objects;
 import org.joda.time.DateTime;
+import java.util.ArrayList;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -40,6 +41,13 @@ public class Plan extends RecurlyObject {
 
     @XmlElement(name = "name")
     private String name;
+
+    @XmlElement(name = "pricing_model")
+    private PricingModel pricingModel;
+
+    @XmlElementWrapper(name = "ramp_intervals")
+    @XmlElement(name = "ramp_interval")
+    private PlanRampIntervals rampIntervals;
 
     @XmlElement(name = "description")
     private String description;
@@ -121,6 +129,26 @@ public class Plan extends RecurlyObject {
 
     @XmlElement(name = "dunning_campaign_id")
     private String dunningCampaignId;
+
+    @XmlElementWrapper(name = "custom_fields")
+    @XmlElement(name= "custom_field")
+    private CustomFields customFields;
+
+    public PricingModel getPricingModel() {
+        return pricingModel;
+    }
+    public void setPricingModel(final Object pricingModel) {
+        this.pricingModel = enumOrNull(PricingModel.class, pricingModel, true);
+    }
+
+    public PlanRampIntervals getRampIntervals() {
+        return rampIntervals;
+    }
+
+    public void setRampIntervals(final PlanRampIntervals rampIntervals) {
+        this.rampIntervals = rampIntervals;
+    }
+
 
     public String getPlanCode() {
         return planCode;
@@ -362,11 +390,20 @@ public class Plan extends RecurlyObject {
         this.dunningCampaignId = stringOrNull(dunningCampaignId);
     }
 
+    public CustomFields getCustomFields() {
+        return customFields = customFields;
+    }
+
+    public void setCustomFields(final CustomFields customFields) {
+        this.customFields = customFields;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append("Plan");
         sb.append("{addOns=").append(addOns);
+        sb.append(", pricingModel='").append(pricingModel).append('\'');
         sb.append(", planCode='").append(planCode).append('\'');
         sb.append(", name='").append(name).append('\'');
         sb.append(", description='").append(description).append('\'');
@@ -388,6 +425,7 @@ public class Plan extends RecurlyObject {
         sb.append(", createdAt=").append(createdAt);
         sb.append(", updatedAt=").append(updatedAt);
         sb.append(", unitAmountInCents=").append(unitAmountInCents);
+        sb.append(", rampIntervals=").append(rampIntervals);
         sb.append(", setupFeeInCents=").append(setupFeeInCents);
         sb.append(", revenueScheduleType=").append(revenueScheduleType);
         sb.append(", setupFeeRevenueScheduleType=").append(setupFeeRevenueScheduleType);
@@ -395,6 +433,7 @@ public class Plan extends RecurlyObject {
         sb.append(", taxExempt=").append(taxExempt);
         sb.append(", taxCode=").append(taxCode);
         sb.append(", allowAnyItemOnSubscriptions=").append(allowAnyItemOnSubscriptions);
+        sb.append(", customFields=").append(customFields);
         sb.append('}');
         return sb.toString();
     }
@@ -440,6 +479,12 @@ public class Plan extends RecurlyObject {
             return false;
         }
         if (planCode != null ? !planCode.equals(plan.planCode) : plan.planCode != null) {
+            return false;
+        }
+        if (pricingModel != null ? !pricingModel.equals(plan.pricingModel) : plan.pricingModel != null) {
+            return false;
+        }
+        if (rampIntervals != null ? !rampIntervals.equals(plan.rampIntervals) : plan.rampIntervals != null) {
             return false;
         }
         if (planIntervalLength != null ? !planIntervalLength.equals(plan.planIntervalLength) : plan.planIntervalLength != null) {
@@ -493,6 +538,9 @@ public class Plan extends RecurlyObject {
         if (allowAnyItemOnSubscriptions != null ? allowAnyItemOnSubscriptions.compareTo(plan.allowAnyItemOnSubscriptions) != 0: plan.allowAnyItemOnSubscriptions != null) {
             return false;
         }
+        if (customFields != null ? !customFields.equals(plan.customFields) : plan.customFields != null) {
+            return false;
+        }
 
         return true;
     }
@@ -503,6 +551,8 @@ public class Plan extends RecurlyObject {
                 addOns,
                 planCode,
                 name,
+                pricingModel,
+                rampIntervals,
                 description,
                 successLink,
                 cancelLink,
@@ -528,7 +578,8 @@ public class Plan extends RecurlyObject {
                 autoRenew,
                 taxExempt,
                 taxCode,
-                allowAnyItemOnSubscriptions
+                allowAnyItemOnSubscriptions,
+                customFields
         );
     }
 }

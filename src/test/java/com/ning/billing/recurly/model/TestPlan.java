@@ -164,4 +164,67 @@ public class TestPlan extends TestModelBase {
         assertEquals(plan.hashCode(), otherPlan.hashCode());
         assertEquals(plan, otherPlan);
     }
+
+    @Test(groups = "fast")
+    public void testCreateWithRamps() throws Exception {
+        // See https://dev.recurly.com/docs/list-plans
+        final String planData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                                "<plan href=\"https://api.recurly.com/v2/plans/gold\">\n" +
+                                "  <add_ons href=\"https://api.recurly.com/v2/plans/gold/add_ons\"/>\n" +
+                                "  <plan_code>gold</plan_code>\n" +
+                                "  <name>Gold plan</name>\n" +
+                                "  <description nil=\"nil\"></description>\n" +
+                                "  <plan_interval_length type=\"integer\">1</plan_interval_length>\n" +
+                                "  <plan_interval_unit>months</plan_interval_unit>\n" +
+                                "  <pricing_model>ramp</pricing_model>\n" +
+                                "  <ramp_intervals>\n" +
+                                "    <ramp_interval>\n" +
+                                "      <starting_billing_cycle>1</starting_billing_cycle>\n" +
+                                "      <unit_amount_in_cents>\n" +
+                                "        <USD type=\"integer\">1000</USD>\n" +
+                                "      </unit_amount_in_cents>\n" +
+                                "    </ramp_interval>\n" +
+                                "  </ramp_intervals>\n" +
+                                "</plan>";
+
+        final Plan plan = xmlMapper.readValue(planData, Plan.class);
+        final PlanRampIntervals planRamps = plan.getRampIntervals();
+        final PlanRampInterval planRamp = planRamps.get(0);
+        Assert.assertEquals(plan.getPlanCode(), "gold");
+        Assert.assertEquals(plan.getPricingModel(), PricingModel.RAMP);
+        Assert.assertEquals(plan.getName(), "Gold plan");
+        Assert.assertEquals(planRamps.size(), 1);
+        Assert.assertEquals((int) planRamp.getStartingBillingCycle(), 1);
+        Assert.assertEquals((int) planRamp.getUnitAmountInCents().getUnitAmountUSD(), 1000);
+    }
+
+    @Test(groups = "fast")
+    public void testCreateWithCustomFields() throws Exception {
+        // See https://dev.recurly.com/docs/list-plans
+        final String planData = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" +
+                                "<plan href=\"https://api.recurly.com/v2/plans/gold\">\n" +
+                                "  <add_ons href=\"https://api.recurly.com/v2/plans/gold/add_ons\"/>\n" +
+                                "  <plan_code>gold</plan_code>\n" +
+                                "  <name>Gold plan</name>\n" +
+                                "  <description nil=\"nil\"></description>\n" +
+                                "  <plan_interval_length type=\"integer\">1</plan_interval_length>\n" +
+                                "  <plan_interval_unit>months</plan_interval_unit>\n" +
+                                "  <pricing_model>ramp</pricing_model>\n" +
+                                "  <custom_fields>\n" +
+                                "    <custom_field>\n" +
+                                "      <name>food</name>\n" +
+                                "      <value>pizza</value>\n" +
+                                "    </custom_field>\n" +
+                                "  </custom_fields>\n" +
+                                "</plan>";
+
+        final Plan plan = xmlMapper.readValue(planData, Plan.class);
+        final CustomFields fields = plan.getCustomFields();
+        final CustomField field = fields.get(0);
+        Assert.assertEquals(plan.getPlanCode(), "gold");
+        Assert.assertEquals(fields.size(), 1);
+        Assert.assertEquals(field.getName(), "food");
+    }
+
 }
+
