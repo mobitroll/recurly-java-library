@@ -17,6 +17,7 @@
 
 package com.ning.billing.recurly.model;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.ning.billing.recurly.TestUtils;
 import org.joda.time.DateTime;
 import org.testng.Assert;
@@ -42,6 +43,7 @@ public class TestAccount extends TestModelBase {
                                    "  <override_business_entity href=\"https://api.recurly.com/v2/business_entities/1\"/>\n" +
                                    "  <account_code>1</account_code>\n" +
                                    "  <parent_account_code>2</parent_account_code>\n" +
+                                   "  <bill_to>parent</bill_to>\n" +
                                    "  <state>active</state>\n" +
                                    "  <username nil=\"nil\"></username>\n" +
                                    "  <email>verena@example.com</email>\n" +
@@ -90,6 +92,16 @@ public class TestAccount extends TestModelBase {
     }
 
     @Test(groups = "fast")
+    public void testDeserialization() throws JsonProcessingException {
+        Account account = TestUtils.createRandomAccount(0);
+        account.setBillTo("parent");
+
+        String accountString = xmlMapper.writeValueAsString(account);
+        Assert.assertNotNull(accountString);
+        Assert.assertTrue(accountString.contains("<bill_to>parent</bill_to>"));
+    }
+
+    @Test(groups = "fast")
     public void testHashCodeAndEquality() throws Exception {
         // create accounts of the same value but difference references
         Account account = TestUtils.createRandomAccount(0);
@@ -128,6 +140,7 @@ public class TestAccount extends TestModelBase {
         Assert.assertFalse(account.getHasPastDueInvoice());
         Assert.assertEquals(account.getVatNumber(), "U12345678");
         Assert.assertEquals(account.getParentAccountCode(), "2");
+        Assert.assertEquals(account.getBillTo(), "parent");
         Assert.assertEquals(account.getDunningCampaignId(), "1234abcd");
     }
 
