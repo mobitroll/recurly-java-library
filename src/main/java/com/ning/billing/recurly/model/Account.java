@@ -181,6 +181,10 @@ public class Account extends RecurlyObject {
     @XmlElementWrapper(name = "external_accounts")
     private ExternalAccounts externalAccounts;
 
+    @XmlElement(name = "bill_to")
+    private String billTo;
+
+
     @Override
     public void setHref(final Object href) {
         super.setHref(href);
@@ -503,6 +507,14 @@ public class Account extends RecurlyObject {
         this.transactionType = stringOrNull(transactionType);
     }
 
+    public void setBillTo(String billTo) {
+        this.billTo = billTo;
+    }
+
+    public String getBillTo() {
+        return billTo;
+    }
+
     public String getOverrideBusinessEntityId() {
         return overrideBusinessEntityId;
     }
@@ -577,6 +589,7 @@ public class Account extends RecurlyObject {
         sb.append(", hasPastDueInvoice=").append(hasPastDueInvoice);
         sb.append(", hasPausedSubscription=").append(hasPausedSubscription);
         sb.append(", vatNumber=").append(vatNumber);
+        sb.append(", billTo=").append(billTo);
         sb.append(", accountAcquisition=").append(accountAcquisition);
         sb.append(", preferredLocale=").append(preferredLocale);
         sb.append(", preferredTimeZone=").append(preferredTimeZone);
@@ -603,6 +616,9 @@ public class Account extends RecurlyObject {
             return false;
         }
         if (parentAccountCode != null ? !parentAccountCode.equals(account.parentAccountCode) : account.parentAccountCode != null) {
+            return false;
+        }
+        if (billTo != null ? !billTo.equals(account.billTo) : account.billTo != null) {
             return false;
         }
         if (address != null ? !address.equals(account.address) : account.address != null) {
