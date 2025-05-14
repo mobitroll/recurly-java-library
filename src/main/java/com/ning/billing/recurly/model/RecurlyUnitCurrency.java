@@ -95,6 +95,14 @@ public class RecurlyUnitCurrency {
     @XmlElement(name = "ZAR")
     private Integer unitAmountZAR;
 
+    // Brazilian Real
+    @XmlElement(name = "BRL")
+    private Integer unitAmountBRL;
+
+    // Mexican Peso
+    @XmlElement(name = "MXN")
+    private Integer unitAmountMXN;
+
     public static RecurlyUnitCurrency build(@Nullable final Object unitAmountInCents) {
         Map amounts;
         if (RecurlyObject.isNull(unitAmountInCents)) {
@@ -127,6 +135,8 @@ public class RecurlyUnitCurrency {
             recurlyUnitCurrency.setUnitAmountZAR(amounts.get("ZAR"));
             recurlyUnitCurrency.setUnitAmountJPY(amounts.get("JPY"));
             recurlyUnitCurrency.setUnitAmountINR(amounts.get("INR"));
+            recurlyUnitCurrency.setUnitAmountBRL(amounts.get("BRL"));
+            recurlyUnitCurrency.setUnitAmountMXN(amounts.get("MXN"));
         }
 
         return recurlyUnitCurrency;
@@ -268,6 +278,22 @@ public class RecurlyUnitCurrency {
         this.unitAmountZAR = RecurlyObject.integerOrNull(unitAmountZAR);
     }
 
+    public Integer getUnitAmountBRL() {
+        return unitAmountBRL;
+    }
+
+    public void setUnitAmountBRL(final Object unitAmountBRL) {
+        this.unitAmountBRL = RecurlyObject.integerOrNull(unitAmountBRL);
+    }
+
+    public Integer getUnitAmountMXN() {
+        return unitAmountMXN;
+    }
+
+    public void setUnitAmountMXN(final Object unitAmountMXN) {
+        this.unitAmountMXN = RecurlyObject.integerOrNull(unitAmountMXN);
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder();
@@ -289,6 +315,8 @@ public class RecurlyUnitCurrency {
         sb.append(", unitAmountZAR=").append(unitAmountZAR);
         sb.append(", unitAmountJPY=").append(unitAmountJPY);
         sb.append(", unitAmountINR=").append(unitAmountINR);
+        sb.append(", unitAmountBRL=").append(unitAmountBRL);
+        sb.append(", unitAmountMXN=").append(unitAmountMXN);
         sb.append('}');
         return sb.toString();
     }
@@ -351,6 +379,12 @@ public class RecurlyUnitCurrency {
         if (unitAmountINR != null ? !unitAmountINR.equals(that.unitAmountINR) : that.unitAmountINR != null) {
             return false;
         }
+        if (unitAmountBRL != null ? !unitAmountBRL.equals(that.unitAmountBRL) : that.unitAmountBRL != null) {
+            return false;
+        }
+        if (unitAmountMXN != null ? !unitAmountMXN.equals(that.unitAmountMXN) : that.unitAmountMXN != null) {
+            return false;
+        }
         return true;
     }
 
@@ -373,7 +407,9 @@ public class RecurlyUnitCurrency {
                 unitAmountCHF,
                 unitAmountZAR,
                 unitAmountJPY,
-                unitAmountINR
+                unitAmountINR,
+                unitAmountBRL,
+                unitAmountMXN
         );
     }
 }
